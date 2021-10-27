@@ -14,6 +14,8 @@
 #include "display.h"
 #include "input.h"
 #include "game.h"
+#include "map.h"
+#include "sprite.h"
 
 int main(void){
 	checkAllegroComponent(al_init(), "allegro");
@@ -30,6 +32,9 @@ int main(void){
 
 	displayInit();
 	keyboardInit();
+	spriteSystemInit();
+
+	Game* game = gameConstructor();
 
 	al_register_event_source(queue, al_get_keyboard_event_source());
 	al_register_event_source(queue, al_get_display_event_source(mainDisplay));
@@ -48,12 +53,11 @@ int main(void){
 					done = true;
 
 				redraw = true;
-				frames++;
+				game->frames++;
 				break;
 
 			case ALLEGRO_EVENT_DISPLAY_CLOSE:
 				done = true;
-				frames++;
 				break;
 		}
 
@@ -65,12 +69,15 @@ int main(void){
 			selectBitmapBuffer();
 			al_clear_to_color(al_map_rgb(0,0,0));
 
+			al_draw_textf(font ,al_map_rgb(255, 255, 255), 0, 0, 0, "Im alive");
+
 			flipDisplay();
 			redraw = false;	
 		}
 	}
 
 	displayFree();
+	gameDestructor(game);
 
   return 0;
 }

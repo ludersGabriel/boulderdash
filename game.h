@@ -4,7 +4,17 @@
 #ifndef GAME_H
 #define GAME_H
 
-extern long frames;
-extern long score;
+#include <allegro5/allegro5.h>
+#include "map.h"
+
+typedef struct GAME{
+  long frames;
+  long score;
+  Map* map;
+}Game;
+
+Game* gameConstructor();
+
+void gameDestructor(Game* game);
 
 #endif

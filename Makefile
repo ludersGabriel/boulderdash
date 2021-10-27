@@ -5,7 +5,7 @@
 CFLAGS = -Wall -std=c99 -g
 LDLIBS = -lallegro -lallegro_font -lallegro_primitives -lallegro_audio -lallegro_acodec -lallegro_image -lm
 CC = gcc 
-OBJ = main.o game.o input.o display.o utils.o
+OBJ = main.o game.o input.o display.o utils.o map.o sprite.o
 
 
 # regra default e ligação
@@ -31,13 +31,22 @@ display.o: display.c
 utils.o: utils.c
 	$(CC) -c utils.c $(CFLAGS)
 
+map.o: map.c
+	$(CC) -c map.c $(CFLAGS)	
+
+sprite.o: sprite.c
+	$(CC) -c sprite.c $(CFLAGS)
+
 # Regras de limpeza
 
 run: all
 	./boulderdash
 
-valgrind: all
+valgrindFull: all
 	valgrind --leak-check=full --show-leak-kinds=all ./boulderdash
+
+valgrind: all
+	valgrind ./boulderdash
 
 clean: 
 	-rm -f *.o

@@ -6,6 +6,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+void* mallocSpace(int size, const char* desc);
+
 void checkAllegroComponent(bool component, const char* desc);
 
 #endif
