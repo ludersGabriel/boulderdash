@@ -21,6 +21,7 @@ void gameDestructor(Game* game){
   if(!game) return;
 
   mapDestructor(game->map);
+  playerDestructor(game->player);
 
   free(game);
 }

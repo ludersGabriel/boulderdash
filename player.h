@@ -5,8 +5,11 @@
 #define PLAYER_H
 
 #include <allegro5/allegro5.h>
+#include "sprite.h"
 
-
+#define PLAYER_FATIGUE 5
+#define PLAYER_SPEED_X 16
+#define PLAYER_SPPED_Y 16
 typedef struct POINT{
   int x;
   int y;
@@ -18,9 +21,10 @@ typedef struct PLAYER{
   Point startPos;
   Point currentPos;
   Point speed;
+  int fatigue_timer;
 
   ALLEGRO_BITMAP* _sheet;
-  ALLEGRO_BITMAP* _sprite;
+  Sprite* _sprite;
 }Player;
 
 Player* playerConstructor();

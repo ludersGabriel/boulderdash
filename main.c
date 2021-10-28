@@ -63,8 +63,8 @@ int main(void){
 
 		if(done) break;
 
-		keyboardUpdate(&event);
 		gameUpdate(game, &event);
+		keyboardUpdate(&event);
 
 		if(redraw && al_is_event_queue_empty(queue)){
 			selectBitmapBuffer();

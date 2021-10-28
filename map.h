@@ -5,10 +5,11 @@
 #define MAP_H
 
 #include <allegro5/allegro5.h>
+#include "sprite.h"
 
 typedef struct MAP{
   ALLEGRO_BITMAP* _sheet;
-  ALLEGRO_BITMAP* background;
+  Sprite* background;
 }Map;
 
 Map* mapConstructor();

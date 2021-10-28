@@ -22,8 +22,7 @@ void keyboardUpdate(ALLEGRO_EVENT* event){
     case ALLEGRO_EVENT_KEY_DOWN:
       virtualKeyboard[event->keyboard.keycode] = KEY_SEEN | KEY_RELEASED;
       break;
-
-    case ALLEGRO_KEY_UP:
+    case ALLEGRO_EVENT_KEY_UP:
       virtualKeyboard[event->keyboard.keycode] &= KEY_RELEASED;
       break;
   }
