@@ -6,15 +6,21 @@
 
 #include <allegro5/allegro5.h>
 #include "map.h"
+#include "player.h"
 
 typedef struct GAME{
   long frames;
   long score;
   Map* map;
+  Player* player;
 }Game;
 
 Game* gameConstructor();
 
 void gameDestructor(Game* game);
+
+void gameUpdate(Game* game, ALLEGRO_EVENT* event);
+
+void gameDraw(Game* game);
 
 #endif

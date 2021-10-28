@@ -15,4 +15,8 @@ Map* mapConstructor();
 
 void mapDestructor(Map* map);
 
+void mapUpdate(Map* map, ALLEGRO_EVENT* event);
+
+void mapDraw(Map* map);
+
 #endif

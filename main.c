@@ -64,11 +64,13 @@ int main(void){
 		if(done) break;
 
 		keyboardUpdate(&event);
+		gameUpdate(game, &event);
 
 		if(redraw && al_is_event_queue_empty(queue)){
 			selectBitmapBuffer();
 			al_clear_to_color(al_map_rgb(0,0,0));
 
+			gameDraw(game);
 			al_draw_textf(font ,al_map_rgb(255, 255, 255), 0, 0, 0, "Im alive");
 
 			flipDisplay();
