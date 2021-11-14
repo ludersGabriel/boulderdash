@@ -21,6 +21,7 @@ Player* playerConstructor(Display* display){
   player->_sheet = loadSheet("./resources/playerSheet.png");
   player->_sprite = spriteConstructor(player->_sheet, 0, 0, 16, 16, "player sprite");
   player->fatigue_timer = 0;
+  player->fatigue = PLAYER_FATIGUE;
 
   return player;
 }
@@ -39,19 +40,19 @@ void controlPlayerMovement(Player* player, Display* display){
 
   if(virtualKeyboard[ALLEGRO_KEY_D] || virtualKeyboard[ALLEGRO_KEY_RIGHT]){
     player->currentPos.x += player->speed.x;
-    player->fatigue_timer = PLAYER_FATIGUE;
+    player->fatigue_timer = player->fatigue;
   }
   else if(virtualKeyboard[ALLEGRO_KEY_A] || virtualKeyboard[ALLEGRO_KEY_LEFT]){
     player->currentPos.x -= player->speed.x;
-    player->fatigue_timer = PLAYER_FATIGUE;
+    player->fatigue_timer = player->fatigue;
   }
   else if(virtualKeyboard[ALLEGRO_KEY_W] || virtualKeyboard[ALLEGRO_KEY_UP]){
     player->currentPos.y -= player->speed.y;
-    player->fatigue_timer = PLAYER_FATIGUE;
+    player->fatigue_timer = player->fatigue;
   }
   else if(virtualKeyboard[ALLEGRO_KEY_S] || virtualKeyboard[ALLEGRO_KEY_DOWN]){
     player->currentPos.y += player->speed.y;
-    player->fatigue_timer = PLAYER_FATIGUE;
+    player->fatigue_timer = player->fatigue;
   }
 
   if(player->currentPos.x < 0){

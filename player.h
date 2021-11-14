@@ -23,6 +23,7 @@ typedef struct PLAYER{
   Point currentPos;
   Point speed;
   int fatigue_timer;
+  int fatigue;
 
   ALLEGRO_BITMAP* _sheet;
   Sprite* _sprite;
