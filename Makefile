@@ -5,7 +5,7 @@
 CFLAGS = -Wall -std=c99 -g
 LDLIBS = -lallegro -lallegro_font -lallegro_primitives -lallegro_audio -lallegro_acodec -lallegro_image -lm
 CC = gcc 
-OBJ = main.o game.o input.o display.o utils.o map.o sprite.o player.o
+OBJ = main.o game.o input.o display.o utils.o map.o sprite.o player.o object.o
 
 
 # regra default e ligação
@@ -39,6 +39,9 @@ sprite.o: sprite.c
 
 player.o: player.c
 	$(CC) -c player.c $(CFLAGS)
+
+object.o: object.c
+	$(CC) -c object.c $(CFLAGS)
 
 # Regras de limpeza
 

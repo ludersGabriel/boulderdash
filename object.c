@@ -5,6 +5,31 @@
 #include "utils.h"
 #include "sprite.h"
 
+ObjectArr* objArrConstructor(int size, const char* errorMessage){
+  ObjectArr* objArr = mallocSpace(sizeof(ObjectArr), errorMessage);
+
+  objArr->objects = mallocSpace(sizeof(Object*) * size, errorMessage);
+  objArr->length = size;
+
+  for(int i = 0; i < size; i++){
+    objArr->objects[i] = NULL;
+  }
+
+  return objArr;
+}
+
+void objArrDestructor(ObjectArr* objArr){
+  if(!objArr) return;
+
+  for(int i = 0; i < objArr->length; i++){
+    if(!objArr->objects[i]) continue;
+
+    free(objArr->objects[i]);
+  }
+  free(objArr->objects);
+  free(objArr);
+}
+
 Object* objectConstructor(
   Point pos,
   Sprite* _sprite,

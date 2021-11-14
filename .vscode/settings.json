@@ -6,6 +6,7 @@
     "allegro_primitives.h": "c",
     "allegro_font.h": "c",
     "allegro.h": "c",
-    "player.h": "c"
+    "player.h": "c",
+    "game.h": "c"
   }
 }

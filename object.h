@@ -4,7 +4,7 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include "game.h"
+#include "player.h"
 
 typedef struct OBJECT{
   Point pos;
@@ -14,6 +14,15 @@ typedef struct OBJECT{
   bool dangerous;
   bool moving;
 }Object;
+
+typedef struct OBJECT_ARRAY{
+  Object** objects;
+  int length;
+}ObjectArr;
+
+ObjectArr* objArrConstructor(int size, const char* errorMessage);
+
+void objArrDestructor(ObjectArr* objArr);
 
 Object* objectConstructor(
   Point pos,
