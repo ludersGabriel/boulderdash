@@ -15,7 +15,6 @@ typedef struct POINT{
   int x;
   int y;
 }Point;
-
 typedef struct PLAYER{
   int hp;
   bool alive;

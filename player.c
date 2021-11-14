@@ -27,6 +27,8 @@ Player* playerConstructor(Display* display){
 }
 
 void playerDestructor(Player* player){
+  if(!player) return;
+  
   sheetDestructor(player->_sheet);
   spriteDestructor(player->_sprite);
   free(player);
