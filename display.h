@@ -13,15 +13,20 @@
 #define DISPLAY_WIDTH (BUFFER_WIDTH * DISPLAY_SCALE)
 #define DISPLAY_HEIGHT (BUFFER_HEIGHT * DISPLAY_SCALE)
 
-extern ALLEGRO_DISPLAY* mainDisplay;
-extern ALLEGRO_BITMAP* bitmapBuffer;
+typedef struct DISPLAY{
+  ALLEGRO_DISPLAY* mainDisplay;
+  ALLEGRO_BITMAP* bitmapBuffer;
+}Display;
+
 
 void displayInit();
 
-void displayFree();
+Display* displayConstructor();
 
-void selectBitmapBuffer();
+void displayDestructor(Display* display);
 
-void flipDisplay();
+void selectBitmapBuffer(Display* display);
+
+void flipDisplay(Display* display);
 
 #endif

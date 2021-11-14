@@ -18,7 +18,7 @@ Player* playerConstructor(){
   player->currentPos = player->startPos;
   player->speed.x = PLAYER_SPEED_X;
   player->speed.y = PLAYER_SPPED_Y; 
-  player->_sheet = loadSheet("./playerSheet.png");
+  player->_sheet = loadSheet("./resources/playerSheet.png");
   player->_sprite = spriteConstructor(player->_sheet, 0, 0, 16, 16, "player sprite");
   player->fatigue_timer = 0;
 

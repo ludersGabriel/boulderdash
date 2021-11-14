@@ -5,12 +5,14 @@
 #include "sprite.h"
 #include "utils.h"
 #include "player.h"
+#include "display.h"
 
 Game* gameConstructor(ALLEGRO_BITMAP* mapSheet){
   Game* game = mallocSpace(sizeof(Game), "game pointer null");
   
   game->frames = 0;
   game->score = 0;
+  game->display = displayConstructor();
   game->map = mapConstructor();
   game->player = playerConstructor();
 
@@ -22,6 +24,7 @@ void gameDestructor(Game* game){
 
   mapDestructor(game->map);
   playerDestructor(game->player);
+  displayDestructor(game->display);
 
   free(game);
 }

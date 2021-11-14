@@ -179,7 +179,7 @@ ALLEGRO_BITMAP* sprite_grab(int x, int y, int w, int h)
 
 void sprites_init()
 {
-    sprites._sheet = al_load_bitmap("spritesheet.png");
+    sprites._sheet = al_load_bitmap("./resources/spritesheet.png");
     must_init(sprites._sheet, "spritesheet");
 
     sprites.ship = sprite_grab(0, 0, SHIP_W, SHIP_H);

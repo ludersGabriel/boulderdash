@@ -46,7 +46,7 @@ run: all
 	./boulderdash
 
 valgrindFull: all
-	valgrind --leak-check=full --show-leak-kinds=all ./boulderdash
+	valgrind --leak-check=full ./boulderdash
 
 valgrind: all
 	valgrind ./boulderdash

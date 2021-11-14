@@ -9,7 +9,7 @@
 Map* mapConstructor(){
   Map* map = mallocSpace(sizeof(Map), "map pointer null");
 
-  map->_sheet = loadSheet("mapSheet.png");
+  map->_sheet = loadSheet("./resources/mapSheet.png");
   map->background = spriteConstructor(map->_sheet, 32, 128, 16, 16, "background");
 
   return map;

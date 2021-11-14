@@ -7,12 +7,14 @@
 #include <allegro5/allegro5.h>
 #include "map.h"
 #include "player.h"
+#include "display.h"
 
 typedef struct GAME{
   long frames;
   long score;
   Map* map;
   Player* player;
+  Display* display;
 }Game;
 
 Game* gameConstructor();

@@ -37,7 +37,7 @@ int main(void){
 	Game* game = gameConstructor();
 
 	al_register_event_source(queue, al_get_keyboard_event_source());
-	al_register_event_source(queue, al_get_display_event_source(mainDisplay));
+	al_register_event_source(queue, al_get_display_event_source(game->display->mainDisplay));
 	al_register_event_source(queue, al_get_timer_event_source(timer));
 
 	bool done = false;
@@ -67,18 +67,17 @@ int main(void){
 		keyboardUpdate(&event);
 
 		if(redraw && al_is_event_queue_empty(queue)){
-			selectBitmapBuffer();
+			selectBitmapBuffer(game->display);
 			al_clear_to_color(al_map_rgb(0,0,0));
 
 			gameDraw(game);
 			al_draw_textf(font ,al_map_rgb(255, 255, 255), 0, 0, 0, "Im alive");
 
-			flipDisplay();
+			flipDisplay(game->display);
 			redraw = false;	
 		}
 	}
 
-	displayFree();
 	gameDestructor(game);
 
   return 0;
