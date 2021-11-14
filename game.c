@@ -14,7 +14,7 @@ Game* gameConstructor(ALLEGRO_BITMAP* mapSheet){
   game->score = 0;
   game->display = displayConstructor();
   game->map = mapConstructor();
-  game->player = playerConstructor();
+  game->player = playerConstructor(game->display);
 
   return game;    
 }
@@ -33,12 +33,12 @@ void gameUpdate(Game* game, ALLEGRO_EVENT* event){
   if(!game || !event) return;
 
   mapUpdate(game->map, event);
-  playerUpdate(game->player, event);
+  playerUpdate(game->player, event, game->display);
 }
 
 void gameDraw(Game* game){
   if(!game) return;
 
-  mapDraw(game->map);
+  mapDraw(game->map, game->display);
   playerDraw(game->player);
 }

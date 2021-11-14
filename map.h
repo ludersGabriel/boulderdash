@@ -6,6 +6,7 @@
 
 #include <allegro5/allegro5.h>
 #include "sprite.h"
+#include "display.h"
 
 typedef struct MAP{
   ALLEGRO_BITMAP* _sheet;
@@ -18,6 +19,6 @@ void mapDestructor(Map* map);
 
 void mapUpdate(Map* map, ALLEGRO_EVENT* event);
 
-void mapDraw(Map* map);
+void mapDraw(Map* map, Display* display);
 
 #endif

@@ -16,6 +16,10 @@
 typedef struct DISPLAY{
   ALLEGRO_DISPLAY* mainDisplay;
   ALLEGRO_BITMAP* bitmapBuffer;
+  int width;
+  int height;
+  int bufferWidth;
+  int bufferHeight;
 }Display;
 
 

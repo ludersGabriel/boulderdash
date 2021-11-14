@@ -18,6 +18,11 @@ Display* displayConstructor(){
   display->bitmapBuffer = al_create_bitmap(BUFFER_WIDTH, BUFFER_HEIGHT);
   checkAllegroComponent(display->bitmapBuffer, "bitmap buffer");
 
+  display->height = DISPLAY_HEIGHT;
+  display->width = DISPLAY_WIDTH;
+  display->bufferHeight = BUFFER_HEIGHT;
+  display->bufferWidth = BUFFER_WIDTH;
+
   return display;
 }
 
@@ -40,12 +45,12 @@ void flipDisplay(Display* display){
     display->bitmapBuffer,
     0, 
     0,
-    BUFFER_WIDTH,
-    BUFFER_HEIGHT,
+    display->bufferWidth,
+    display->bufferHeight,
     0, 
     0,
-    DISPLAY_WIDTH,
-    DISPLAY_HEIGHT,
+    display->width,
+    display->height,
     0
   );
 

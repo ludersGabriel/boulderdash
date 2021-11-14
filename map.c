@@ -27,17 +27,17 @@ void mapUpdate(Map* map, ALLEGRO_EVENT* event){
   if(!map) return;
 }
 
-void drawBackground(Sprite* background){
-  for(int i = 0; i < BUFFER_HEIGHT; i += background->height){
-    for(int j = 0; j < BUFFER_WIDTH; j += background->width){
+void drawBackground(Sprite* background, Display* display){
+  for(int i = 0; i < display->bufferHeight; i += background->height){
+    for(int j = 0; j < display->bufferWidth; j += background->width){
       al_draw_bitmap(background->bitmap, j, i, 0);
     }
   }
 }
 
-void mapDraw(Map* map){
+void mapDraw(Map* map, Display* display){
   if(!map) return;
 
-  drawBackground(map->background);
+  drawBackground(map->background, display);
   
 }

@@ -6,6 +6,7 @@
 
 #include <allegro5/allegro5.h>
 #include "sprite.h"
+#include "display.h"
 
 #define PLAYER_FATIGUE 5
 #define PLAYER_SPEED_X 16
@@ -27,11 +28,11 @@ typedef struct PLAYER{
   Sprite* _sprite;
 }Player;
 
-Player* playerConstructor();
+Player* playerConstructor(Display* display);
 
 void playerDestructor(Player* player);
 
-void playerUpdate(Player* player, ALLEGRO_EVENT* event);
+void playerUpdate(Player* player, ALLEGRO_EVENT* event, Display* display);
 
 void playerDraw(Player* player);
 

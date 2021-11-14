@@ -8,13 +8,13 @@
 #include "sprite.h"
 #include "input.h"
 
-Player* playerConstructor(){
+Player* playerConstructor(Display* display){
   Player* player = mallocSpace(sizeof(Player), "player pointer null");
 
   player->alive = true;
   player->hp = 3;
-  player->startPos.x = BUFFER_WIDTH/2;
-  player->startPos.y = BUFFER_HEIGHT/2;
+  player->startPos.x = display->bufferWidth/2;
+  player->startPos.y = display->bufferHeight/2;
   player->currentPos = player->startPos;
   player->speed.x = PLAYER_SPEED_X;
   player->speed.y = PLAYER_SPPED_Y; 
@@ -31,7 +31,7 @@ void playerDestructor(Player* player){
   free(player);
 }
 
-void controlPlayerMovement(Player* player){
+void controlPlayerMovement(Player* player, Display* display){
   if(player->fatigue_timer){
     player->fatigue_timer--;
     return;
@@ -58,23 +58,23 @@ void controlPlayerMovement(Player* player){
     player->currentPos.x = 0;
   }
 
-  if(player->currentPos.x + player->_sprite->width > BUFFER_WIDTH){
-    player->currentPos.x = BUFFER_WIDTH - player->_sprite->width;
+  if(player->currentPos.x + player->_sprite->width > display->bufferWidth){
+    player->currentPos.x = display->bufferWidth - player->_sprite->width;
   }
 
   if(player->currentPos.y < 0){
     player->currentPos.y = 0;
   }
 
-  if(player->currentPos.y + player->_sprite->height > BUFFER_HEIGHT){
-    player->currentPos.y = BUFFER_HEIGHT - player->_sprite->height;
+  if(player->currentPos.y + player->_sprite->height > display->bufferHeight){
+    player->currentPos.y = display->bufferHeight - player->_sprite->height;
   }
 }
 
-void playerUpdate(Player* player, ALLEGRO_EVENT* event){
+void playerUpdate(Player* player, ALLEGRO_EVENT* event, Display* display){
   switch(event->type){
     case ALLEGRO_EVENT_TIMER:
-      controlPlayerMovement(player);
+      controlPlayerMovement(player, display);
 
       break;
     default:
