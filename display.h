@@ -7,7 +7,7 @@
 #include <allegro5/allegro5.h>
 
 #define BUFFER_WIDTH 640
-#define BUFFER_HEIGHT 360
+#define BUFFER_HEIGHT 368
 
 #define DISPLAY_SCALE 2.5
 #define DISPLAY_WIDTH (BUFFER_WIDTH * DISPLAY_SCALE)

@@ -31,7 +31,8 @@ void objArrDestructor(ObjectArr* objArr){
 }
 
 Object* objectConstructor(
-  Point pos,
+  int x,
+  int y,
   Sprite* _sprite,
   bool visible,
   bool wall,
@@ -41,7 +42,8 @@ Object* objectConstructor(
 ){
   Object* object = mallocSpace(sizeof(Object), errorMessage);
 
-  object->pos = pos;
+  object->pos.x = x;
+  object->pos.y = y;
   object->_sprite = _sprite;
   object->visible = visible;
   object->wall = wall;

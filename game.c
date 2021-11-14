@@ -8,7 +8,7 @@
 #include "display.h"
 
 
-Game* gameConstructor(ALLEGRO_BITMAP* mapSheet){
+Game* gameConstructor(){
   Game* game = mallocSpace(sizeof(Game), "game pointer null");
   
   game->frames = 0;
@@ -16,19 +16,14 @@ Game* gameConstructor(ALLEGRO_BITMAP* mapSheet){
   game->display = displayConstructor();
   game->map = mapConstructor();
   game->player = playerConstructor(game->display);
-  game->rocks = objArrConstructor(5, "failed to malloc rocks");
-  game->sand = objArrConstructor(5, "failed to malloc sand");
-  game->walls = objArrConstructor(5, "failed to malloc walls");
+  
 
   return game;    
 }
 
 void gameDestructor(Game* game){
   if(!game) return;
-
-  objArrDestructor(game->rocks);
-  objArrDestructor(game->sand);
-  objArrDestructor(game->walls);
+  
   mapDestructor(game->map);
   playerDestructor(game->player);
   displayDestructor(game->display);

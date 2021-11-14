@@ -7,10 +7,14 @@
 #include <allegro5/allegro5.h>
 #include "sprite.h"
 #include "display.h"
+#include "object.h"
 
 typedef struct MAP{
   ALLEGRO_BITMAP* _sheet;
   Sprite* background;
+  ObjectArr* rocks;
+  ObjectArr* sand; 
+  ObjectArr* walls; 
 }Map;
 
 Map* mapConstructor();

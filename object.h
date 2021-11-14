@@ -25,7 +25,8 @@ ObjectArr* objArrConstructor(int size, const char* errorMessage);
 void objArrDestructor(ObjectArr* objArr);
 
 Object* objectConstructor(
-  Point pos,
+  int x,
+  int y,
   Sprite* _sprite,
   bool visible,
   bool wall,

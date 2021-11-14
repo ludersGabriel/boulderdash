@@ -8,7 +8,6 @@
 #include "map.h"
 #include "player.h"
 #include "display.h"
-#include "object.h"
 
 typedef struct GAME{
   long frames;
@@ -16,10 +15,6 @@ typedef struct GAME{
   Map* map;
   Player* player;
   Display* display;
-  ObjectArr* rocks;
-  ObjectArr* sand; 
-  ObjectArr* walls; 
-   
 }Game;
 
 Game* gameConstructor();

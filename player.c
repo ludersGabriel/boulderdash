@@ -13,8 +13,8 @@ Player* playerConstructor(Display* display){
 
   player->alive = true;
   player->hp = 3;
-  player->startPos.x = display->bufferWidth/2;
-  player->startPos.y = display->bufferHeight/2;
+  player->startPos.x = display->bufferWidth/2 + (display->bufferWidth/2) % 16;
+  player->startPos.y = display->bufferHeight/2 + (display->bufferHeight/2) % 16;
   player->currentPos = player->startPos;
   player->speed.x = PLAYER_SPEED_X;
   player->speed.y = PLAYER_SPPED_Y; 
