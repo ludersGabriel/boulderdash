@@ -10,6 +10,7 @@
 #include "utils.h"
 #include "object.h"
 #include "collision.h"
+#include "map.h"
 
 #define PLAYER_FATIGUE 5
 #define PLAYER_SPEED_X 16
@@ -36,7 +37,13 @@ Player* playerConstructor(Display* display);
 
 void playerDestructor(Player* player);
 
-void playerUpdate(Player* player, ALLEGRO_EVENT* event, Display* display);
+void playerUpdate(
+  Player* player, 
+  ALLEGRO_EVENT* event, 
+  Display* display,
+  Map* map,
+  long int* score
+);
 
 void playerDraw(Player* player);
 

@@ -14,6 +14,7 @@ typedef struct OBJECT{
   int score;
   int width;
   int height;
+  int speed;
   bool visible;
   bool wall;
   bool dangerous;
@@ -36,6 +37,7 @@ Object* objectConstructor(
   int score,
   int width,
   int height,
+  int speed,
   bool visible,
   bool wall,
   bool dangerous,
@@ -46,5 +48,7 @@ Object* objectConstructor(
 void objectDestructor(Object* object);
 
 Object* collisionObjxObj(Object* obj, ObjectArr* objArr);
+
+void sortObjArr(ObjectArr* objArr);
 
 #endif

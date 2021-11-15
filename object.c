@@ -37,6 +37,7 @@ Object* objectConstructor(
   int score,
   int width,
   int height,
+  int speed,
   bool visible,
   bool wall,
   bool dangerous,
@@ -51,6 +52,7 @@ Object* objectConstructor(
   object->width = width;
   object->height = height;
   object->_sprite = _sprite;
+  object->speed = speed;
   object->visible = visible;
   object->wall = wall;
   object->dangerous = dangerous;
@@ -75,13 +77,9 @@ Object* collisionObjxObj(Object* obj, ObjectArr* objArr){
     if(
       collide(
         obj->pos.x,
-        obj->pos.x + obj->width,
         obj->pos.y,
-        obj->pos.y + obj->height,
         target->pos.x,
-        target->pos.x + target->width,
-        target->pos.y,
-        target->pos.y + target->height
+        target->pos.y
       )
     ){
       return target;
@@ -91,3 +89,23 @@ Object* collisionObjxObj(Object* obj, ObjectArr* objArr){
   return NULL;
 }
 
+void sortObjArr(ObjectArr* objArr){
+  int maxIdx;
+  Object** target = objArr->objects;
+  
+  for(int i = 0; i < objArr->length - 1; i++){
+    maxIdx = i;
+    for(int j = i + 1; j < objArr->length; j++){
+      if(!target[j]) continue;
+      if(
+        !target[maxIdx]
+        || target[maxIdx]->pos.y < target[j]->pos.y 
+      ){
+        maxIdx = j;
+      } 
+    }
+    Object* temp = target[maxIdx];
+    target[maxIdx] = target[i];
+    target[i] = temp;
+  }
+}

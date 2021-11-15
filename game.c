@@ -14,7 +14,7 @@ Game* gameConstructor(){
   game->frames = 0;
   game->score = 0;
   game->display = displayConstructor();
-  game->map = mapConstructor();
+  game->map = mapConstructor(game->display);
   game->player = playerConstructor(game->display);
   
 
@@ -34,13 +34,24 @@ void gameDestructor(Game* game){
 void gameUpdate(Game* game, ALLEGRO_EVENT* event){
   if(!game || !event) return;
 
-  mapUpdate(game->map, event);
-  playerUpdate(game->player, event, game->display);
+  mapUpdate(game->map, event, game->frames);
+  playerUpdate(
+    game->player, 
+    event, 
+    game->display, 
+    game->map,
+    &game->score
+  );
 }
 
-void gameDraw(Game* game){
+void scoreDraw(int score, ALLEGRO_FONT* font){
+  al_draw_textf(font, al_map_rgb(255, 255, 255), 0, 0, 0, "Score: %d", score);
+}
+
+void gameDraw(Game* game, ALLEGRO_FONT* font){
   if(!game) return;
 
   mapDraw(game->map, game->display);
   playerDraw(game->player);
+  scoreDraw(game->score, font);
 }

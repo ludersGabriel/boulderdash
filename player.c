@@ -36,50 +36,94 @@ void playerDestructor(Player* player){
   free(player);
 }
 
-void controlPlayerMovement(Player* player, Display* display){
+Object* collisionPlayerxObj(Player* player, ObjectArr* objArr){
+  for(int i = 0; i < objArr->length; i++){
+    Object* target = objArr->objects[i];
+    if(!target || !target->visible)
+      continue;
+
+    if(
+      collide(
+        player->currentPos.x,
+        player->currentPos.y,
+        target->pos.x,
+        target->pos.y
+      )
+    ){
+      return target;
+    }
+  }
+
+  return NULL;
+}
+
+void handleCollision(
+  Player* player,
+  Point oldPos, 
+  ObjectArr* objArr, 
+  long int* score
+){
+  Object* target = collisionPlayerxObj(player, objArr);
+  if(!target) return;
+  
+  if(target->wall){
+    player->currentPos = oldPos;
+    return;
+  }
+
+  target->visible = false;
+  *score += target->score;
+}
+
+void controlPlayerMovement(
+  Player* player, 
+  Display* display,
+  Map* map,
+  long int* score
+){
   if(player->fatigue_timer){
     player->fatigue_timer--;
     return;
   }
 
+  Point newPos = player->currentPos;
+
   if(virtualKeyboard[ALLEGRO_KEY_D] || virtualKeyboard[ALLEGRO_KEY_RIGHT]){
-    player->currentPos.x += player->speed.x;
-    player->fatigue_timer = player->fatigue;
+    newPos.x += player->speed.x;
   }
   else if(virtualKeyboard[ALLEGRO_KEY_A] || virtualKeyboard[ALLEGRO_KEY_LEFT]){
-    player->currentPos.x -= player->speed.x;
-    player->fatigue_timer = player->fatigue;
+    newPos.x -= player->speed.x;
   }
   else if(virtualKeyboard[ALLEGRO_KEY_W] || virtualKeyboard[ALLEGRO_KEY_UP]){
-    player->currentPos.y -= player->speed.y;
-    player->fatigue_timer = player->fatigue;
+    newPos.y -= player->speed.y;
   }
   else if(virtualKeyboard[ALLEGRO_KEY_S] || virtualKeyboard[ALLEGRO_KEY_DOWN]){
-    player->currentPos.y += player->speed.y;
+    newPos.y += player->speed.y;
+  }
+
+  if(newPos.x != player->currentPos.x || newPos.y != player->currentPos.y){
+    Point oldPos = player->currentPos;
+    player->currentPos = newPos;
+
+    handleCollision(player, oldPos,  map->rocks, score);
+    handleCollision(player, oldPos,  map->sand, score);
+    handleCollision(player, oldPos,  map->diamonds, score);
+    handleCollision(player, oldPos, map->walls, score);
+
     player->fatigue_timer = player->fatigue;
-  }
-
-  if(player->currentPos.x < 0){
-    player->currentPos.x = 0;
-  }
-
-  if(player->currentPos.x + player->_sprite->width > display->bufferWidth){
-    player->currentPos.x = display->bufferWidth - player->_sprite->width;
-  }
-
-  if(player->currentPos.y < 0){
-    player->currentPos.y = 0;
-  }
-
-  if(player->currentPos.y + player->_sprite->height > display->bufferHeight){
-    player->currentPos.y = display->bufferHeight - player->_sprite->height;
   }
 }
 
-void playerUpdate(Player* player, ALLEGRO_EVENT* event, Display* display){
+void playerUpdate(
+  Player* player, 
+  ALLEGRO_EVENT* event, 
+  Display* display,
+  Map* map,
+  long int* score
+){
   switch(event->type){
     case ALLEGRO_EVENT_TIMER:
-      controlPlayerMovement(player, display);
+      controlPlayerMovement(player, display, map, score);
 
       break;
     default:
@@ -91,29 +135,4 @@ void playerDraw(Player* player){
   if(!player) return;
 
   al_draw_bitmap(player->_sprite->bitmap, player->currentPos.x, player->currentPos.y, 0);
-}
-
-Object* collisionPlayerxObj(Player* player, ObjectArr* objArr){
-  for(int i = 0; i < objArr->length; i++){
-    Object* target = objArr->objects[i];
-    if(!target || !target->visible)
-      continue;
-
-    if(
-      collide(
-        player->currentPos.x,
-        player->currentPos.x + player->width,
-        player->currentPos.y,
-        player->currentPos.y + player->height,
-        target->pos.x,
-        target->pos.x + target->width,
-        target->pos.y,
-        target->pos.y + target->height
-      )
-    ){
-      return target;
-    }
-  }
-
-  return NULL;
 }

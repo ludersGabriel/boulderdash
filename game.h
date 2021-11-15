@@ -5,6 +5,7 @@
 #define GAME_H
 
 #include <allegro5/allegro5.h>
+#include <allegro5/allegro_font.h>
 #include "map.h"
 #include "player.h"
 #include "display.h"
@@ -23,6 +24,6 @@ void gameDestructor(Game* game);
 
 void gameUpdate(Game* game, ALLEGRO_EVENT* event);
 
-void gameDraw(Game* game);
+void gameDraw(Game* game, ALLEGRO_FONT* font);
 
 #endif

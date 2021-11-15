@@ -1,6 +1,7 @@
 // Made by Gabriel Lüders
 // GRR20190172 
 
+#include <stdio.h>
 #include "map.h"
 #include "sprite.h"
 #include "utils.h"
@@ -15,13 +16,16 @@ void rocksInit(ObjectArr* rocks, ALLEGRO_BITMAP* sheet){
       0,
       16,
       16,
+      16,
       true,
-      false,
+      true,
       true,
       false,
       "rocky rock"
     );
   }
+
+  sortObjArr(rocks);
 }
 
 void sandInit(ObjectArr* sand, ALLEGRO_BITMAP* sheet){
@@ -33,6 +37,7 @@ void sandInit(ObjectArr* sand, ALLEGRO_BITMAP* sheet){
       10,
       16,
       16,
+      0,
       true,
       false,
       true,
@@ -48,7 +53,8 @@ void diamondsInit(ObjectArr* diamonds, ALLEGRO_BITMAP* sheet){
       16*(13+i),
       16*15,
       spriteConstructor(sheet, 4*16, 8*16, 16, 16, "diamonds"),
-      10,
+      1000,
+      16,
       16,
       16,
       true,
@@ -60,19 +66,72 @@ void diamondsInit(ObjectArr* diamonds, ALLEGRO_BITMAP* sheet){
   }
 }
 
-Map* mapConstructor(){
+void wallsInit(ObjectArr* walls, ALLEGRO_BITMAP* sheet, Map* map){
+  int k = 0;
+  for(int i = 0; i < map->height; i += map->height - 1){
+    for(int j = 0; j < map->width; j += 1){
+      if(k > walls->length) break;
+
+      walls->objects[k++] = objectConstructor(
+        16*j,
+        16*i,
+        spriteConstructor(sheet, 0*16, 8*16, 16, 16, "walls"),
+        1000,
+        16,
+        16,
+        0,
+        true,
+        true,
+        true,
+        false,
+        "wallls"
+      );
+    }
+  }
+
+  for(int i = 0; i < map->width; i += map->width - 1){
+    for(int j = 0; j < map->height; j += 1){
+      if(k > walls->length) break;
+
+      walls->objects[k++] = objectConstructor(
+        16*i,
+        16*j,
+        spriteConstructor(sheet, 0*16, 8*16, 16, 16, "walls"),
+        1000,
+        16,
+        16,
+        0,
+        true,
+        true,
+        true,
+        false,
+        "wallls"
+      );
+    }
+  }
+}
+
+Map* mapConstructor(Display* display){
   Map* map = mallocSpace(sizeof(Map), "map pointer null");
 
   map->_sheet = loadSheet("./resources/mapSheet.png");
   map->background = spriteConstructor(map->_sheet, 32, 128, 16, 16, "background");
+  map->width = display->bufferWidth / 16;
+  map->height = display->bufferHeight / 16;
   map->rocks = objArrConstructor(5, "failed to malloc rocks");
   map->sand = objArrConstructor(5, "failed to malloc sand");
   map->walls = objArrConstructor(5, "failed to malloc walls");
   map->diamonds = objArrConstructor(5, "failed to malloc diamonds");
+  map->walls = objArrConstructor(
+    map->width*2 + map->height*2, 
+    "failed to malloc walls"
+  );
+
 
   rocksInit(map->rocks, map->_sheet);
   sandInit(map->sand, map->_sheet);
   diamondsInit(map->diamonds, map->_sheet);
+  wallsInit(map->walls, map->_sheet, map);
 
   return map;
 }
@@ -88,8 +147,27 @@ void mapDestructor(Map* map){
   free(map);
 }
 
-void mapUpdate(Map* map, ALLEGRO_EVENT* event){
+void updateRocks(ObjectArr* rocks, long int frames){
+  if(frames % 45 != 0) return;
+
+  Object** target = rocks->objects;
+  for(int i = 0; i < rocks->length; i++){
+    if(!target[i]) continue;
+
+    target[i]->pos.y += target[i]->speed;
+  }
+}
+
+void mapUpdate(Map* map, ALLEGRO_EVENT* event, long int frames){
   if(!map) return;
+
+  switch(event->type){
+    case ALLEGRO_EVENT_TIMER:
+      updateRocks(map->rocks, frames);
+      break;
+    default:
+      break;
+  }
 }
 
 void drawBackground(Sprite* background, Display* display){
@@ -102,11 +180,12 @@ void drawBackground(Sprite* background, Display* display){
 
 void drawObjArr(ObjectArr* objArr, Display* display){
   for(int i = 0; i < objArr->length; i++){
-    if(!objArr->objects[i]) continue;
+    Object* target = objArr->objects[i];
+    if(!target || !target->visible) continue;
     al_draw_bitmap(
-      objArr->objects[i]->_sprite->bitmap,
-      objArr->objects[i]->pos.x, 
-      objArr->objects[i]->pos.y, 
+      target->_sprite->bitmap,
+      target->pos.x, 
+      target->pos.y, 
       0
     );
   }
@@ -119,5 +198,6 @@ void mapDraw(Map* map, Display* display){
   drawObjArr(map->rocks, display);
   drawObjArr(map->sand, display);
   drawObjArr(map->diamonds, display);
+  drawObjArr(map->walls, display);
   
 }

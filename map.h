@@ -12,17 +12,19 @@
 typedef struct MAP{
   ALLEGRO_BITMAP* _sheet;
   Sprite* background;
+  int width;
+  int height;
   ObjectArr* rocks;
   ObjectArr* sand; 
   ObjectArr* walls;
   ObjectArr* diamonds;
 }Map;
 
-Map* mapConstructor();
+Map* mapConstructor(Display* display);
 
 void mapDestructor(Map* map);
 
-void mapUpdate(Map* map, ALLEGRO_EVENT* event);
+void mapUpdate(Map* map, ALLEGRO_EVENT* event, long int frames);
 
 void mapDraw(Map* map, Display* display);
 

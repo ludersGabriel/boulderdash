@@ -70,8 +70,7 @@ int main(void){
 			selectBitmapBuffer(game->display);
 			al_clear_to_color(al_map_rgb(0,0,0));
 
-			gameDraw(game);
-			al_draw_textf(font ,al_map_rgb(255, 255, 255), 0, 0, 0, "Im alive");
+			gameDraw(game, font);
 
 			flipDisplay(game->display);
 			redraw = false;	
