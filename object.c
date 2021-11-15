@@ -71,7 +71,7 @@ void objectDestructor(Object* object){
 Object* collisionObjxObj(Object* obj, ObjectArr* objArr){
   for(int i = 0; i < objArr->length; i++){
     Object* target = objArr->objects[i];
-    if(!target || !target->visible)
+    if(!target || !target->visible || target == obj)
       continue;
 
     if(
@@ -87,6 +87,19 @@ Object* collisionObjxObj(Object* obj, ObjectArr* objArr){
   }
 
   return NULL;
+}
+
+void handleCollisionObjects(
+  Object* obj,
+  Point oldPos, 
+  ObjectArr* objArr
+){
+  Object* target = collisionObjxObj(obj, objArr);
+  if(!target) return;
+  
+  obj->pos = oldPos;
+  return;
+
 }
 
 void sortObjArr(ObjectArr* objArr){

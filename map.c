@@ -147,14 +147,28 @@ void mapDestructor(Map* map){
   free(map);
 }
 
-void updateRocks(ObjectArr* rocks, long int frames){
+void rockHeights(ObjectArr* rocks){
+  Object** target = rocks->objects;
+  for(int i = 0; i < rocks->length; i++){
+    if(!target[i]) continue;
+    printf("rock height: %d\n", target[i]->pos.y);
+  }
+  printf("\n\n");
+}
+
+void updateRocks(ObjectArr* rocks, long int frames, Map* map){
   if(frames % 45 != 0) return;
 
   Object** target = rocks->objects;
   for(int i = 0; i < rocks->length; i++){
     if(!target[i]) continue;
 
+    Point oldPos = target[i]->pos;
     target[i]->pos.y += target[i]->speed;
+    handleCollisionObjects(target[i], oldPos, map->sand);
+    handleCollisionObjects(target[i], oldPos, map->diamonds);
+    handleCollisionObjects(target[i], oldPos, map->walls);
+    handleCollisionObjects(target[i], oldPos, map->rocks);
   }
 }
 
@@ -163,7 +177,7 @@ void mapUpdate(Map* map, ALLEGRO_EVENT* event, long int frames){
 
   switch(event->type){
     case ALLEGRO_EVENT_TIMER:
-      updateRocks(map->rocks, frames);
+      updateRocks(map->rocks, frames, map);
       break;
     default:
       break;

@@ -51,4 +51,6 @@ Object* collisionObjxObj(Object* obj, ObjectArr* objArr);
 
 void sortObjArr(ObjectArr* objArr);
 
+void handleCollisionObjects(Object* obj, Point oldPos, ObjectArr* objArr);
+
 #endif
