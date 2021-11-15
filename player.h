@@ -7,20 +7,24 @@
 #include <allegro5/allegro5.h>
 #include "sprite.h"
 #include "display.h"
+#include "utils.h"
+#include "object.h"
+#include "collision.h"
 
 #define PLAYER_FATIGUE 5
 #define PLAYER_SPEED_X 16
 #define PLAYER_SPPED_Y 16
-typedef struct POINT{
-  int x;
-  int y;
-}Point;
+#define PLAYER_WIDTH 16
+#define PLAYER_HEIGHT 16
+
 typedef struct PLAYER{
   int hp;
   bool alive;
   Point startPos;
   Point currentPos;
   Point speed;
+  int width;
+  int height;
   int fatigue_timer;
   int fatigue;
 
@@ -35,5 +39,7 @@ void playerDestructor(Player* player);
 void playerUpdate(Player* player, ALLEGRO_EVENT* event, Display* display);
 
 void playerDraw(Player* player);
+
+Object* collisionPlayerxObj(Player* player, ObjectArr* objArr);
 
 #endif

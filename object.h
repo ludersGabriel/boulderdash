@@ -4,11 +4,16 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include "player.h"
+#include "utils.h"
+#include "sprite.h"
+#include "collision.h"
 
 typedef struct OBJECT{
   Point pos;
   Sprite* _sprite;
+  int score;
+  int width;
+  int height;
   bool visible;
   bool wall;
   bool dangerous;
@@ -28,6 +33,9 @@ Object* objectConstructor(
   int x,
   int y,
   Sprite* _sprite,
+  int score,
+  int width,
+  int height,
   bool visible,
   bool wall,
   bool dangerous,
@@ -36,5 +44,7 @@ Object* objectConstructor(
 );
 
 void objectDestructor(Object* object);
+
+Object* collisionObjxObj(Object* obj, ObjectArr* objArr);
 
 #endif

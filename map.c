@@ -12,6 +12,9 @@ void rocksInit(ObjectArr* rocks, ALLEGRO_BITMAP* sheet){
       16*15,
       16*(i+5),
       spriteConstructor(sheet, 3*16, 16*16, 16, 16, "loadin rock"),
+      0,
+      16,
+      16,
       true,
       false,
       true,
@@ -27,11 +30,32 @@ void sandInit(ObjectArr* sand, ALLEGRO_BITMAP* sheet){
       16*(13+i),
       16*10,
       spriteConstructor(sheet, 1*16, 8*16, 16, 16, "loading sand"),
+      10,
+      16,
+      16,
       true,
       false,
       true,
       false,
       "sandy sand"
+    );
+  }
+}
+
+void diamondsInit(ObjectArr* diamonds, ALLEGRO_BITMAP* sheet){
+  for(int i = 0; i < diamonds->length; i++){
+    diamonds->objects[i] = objectConstructor(
+      16*(13+i),
+      16*15,
+      spriteConstructor(sheet, 4*16, 8*16, 16, 16, "diamonds"),
+      10,
+      16,
+      16,
+      true,
+      false,
+      true,
+      false,
+      "diamooond"
     );
   }
 }
@@ -44,10 +68,11 @@ Map* mapConstructor(){
   map->rocks = objArrConstructor(5, "failed to malloc rocks");
   map->sand = objArrConstructor(5, "failed to malloc sand");
   map->walls = objArrConstructor(5, "failed to malloc walls");
+  map->diamonds = objArrConstructor(5, "failed to malloc diamonds");
 
   rocksInit(map->rocks, map->_sheet);
   sandInit(map->sand, map->_sheet);
-  
+  diamondsInit(map->diamonds, map->_sheet);
 
   return map;
 }
@@ -93,5 +118,6 @@ void mapDraw(Map* map, Display* display){
   drawBackground(map->background, display);
   drawObjArr(map->rocks, display);
   drawObjArr(map->sand, display);
+  drawObjArr(map->diamonds, display);
   
 }

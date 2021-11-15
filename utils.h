@@ -6,6 +6,11 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+typedef struct POINT{
+  int x;
+  int y;
+}Point;
+
 void* mallocSpace(int size, const char* desc);
 
 void checkAllegroComponent(bool component, const char* desc);

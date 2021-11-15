@@ -14,7 +14,8 @@ typedef struct MAP{
   Sprite* background;
   ObjectArr* rocks;
   ObjectArr* sand; 
-  ObjectArr* walls; 
+  ObjectArr* walls;
+  ObjectArr* diamonds;
 }Map;
 
 Map* mapConstructor();

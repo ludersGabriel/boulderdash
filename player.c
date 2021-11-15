@@ -16,6 +16,8 @@ Player* playerConstructor(Display* display){
   player->startPos.x = display->bufferWidth/2 + (display->bufferWidth/2) % 16;
   player->startPos.y = display->bufferHeight/2 + (display->bufferHeight/2) % 16;
   player->currentPos = player->startPos;
+  player->width = PLAYER_WIDTH;
+  player->height = PLAYER_HEIGHT;
   player->speed.x = PLAYER_SPEED_X;
   player->speed.y = PLAYER_SPPED_Y; 
   player->_sheet = loadSheet("./resources/playerSheet.png");
@@ -89,4 +91,29 @@ void playerDraw(Player* player){
   if(!player) return;
 
   al_draw_bitmap(player->_sprite->bitmap, player->currentPos.x, player->currentPos.y, 0);
+}
+
+Object* collisionPlayerxObj(Player* player, ObjectArr* objArr){
+  for(int i = 0; i < objArr->length; i++){
+    Object* target = objArr->objects[i];
+    if(!target || !target->visible)
+      continue;
+
+    if(
+      collide(
+        player->currentPos.x,
+        player->currentPos.x + player->width,
+        player->currentPos.y,
+        player->currentPos.y + player->height,
+        target->pos.x,
+        target->pos.x + target->width,
+        target->pos.y,
+        target->pos.y + target->height
+      )
+    ){
+      return target;
+    }
+  }
+
+  return NULL;
 }
