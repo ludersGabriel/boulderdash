@@ -39,8 +39,7 @@ void playerDestructor(Player* player){
 Object* collisionPlayerxObj(Player* player, ObjectArr* objArr){
   for(int i = 0; i < objArr->length; i++){
     Object* target = objArr->objects[i];
-    if(!target || !target->visible)
-      continue;
+    if(!target || !target->visible) continue;
 
     if(
       collide(
@@ -104,11 +103,6 @@ void controlPlayerMovement(
   if(newPos.x != player->currentPos.x || newPos.y != player->currentPos.y){
     Point oldPos = player->currentPos;
     player->currentPos = newPos;
-
-    handleCollision(player, oldPos,  map->rocks, score);
-    handleCollision(player, oldPos,  map->sand, score);
-    handleCollision(player, oldPos,  map->diamonds, score);
-    handleCollision(player, oldPos, map->walls, score);
 
     player->fatigue_timer = player->fatigue;
   }

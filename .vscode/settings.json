@@ -7,6 +7,15 @@
     "allegro_font.h": "c",
     "allegro.h": "c",
     "player.h": "c",
-    "game.h": "c"
+    "game.h": "c",
+    "optional": "c",
+    "istream": "c",
+    "ostream": "c",
+    "system_error": "c",
+    "array": "c",
+    "functional": "c",
+    "tuple": "c",
+    "type_traits": "c",
+    "utility": "c"
   }
 }

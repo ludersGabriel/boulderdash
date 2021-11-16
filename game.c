@@ -14,8 +14,8 @@ Game* gameConstructor(){
   game->frames = 0;
   game->score = 0;
   game->display = displayConstructor();
-  game->map = mapConstructor(game->display);
   game->player = playerConstructor(game->display);
+  game->map = mapConstructor(game->display, game->player->startPos);
   
 
   return game;    
@@ -34,7 +34,6 @@ void gameDestructor(Game* game){
 void gameUpdate(Game* game, ALLEGRO_EVENT* event){
   if(!game || !event) return;
 
-  mapUpdate(game->map, event, game->frames);
   playerUpdate(
     game->player, 
     event, 
@@ -42,6 +41,7 @@ void gameUpdate(Game* game, ALLEGRO_EVENT* event){
     game->map,
     &game->score
   );
+  mapUpdate(game->map, event, game->frames, game->player->currentPos);
 }
 
 void scoreDraw(int score, ALLEGRO_FONT* font){

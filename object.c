@@ -5,11 +5,13 @@
 #include "utils.h"
 #include "sprite.h"
 
-ObjectArr* objArrConstructor(int size, const char* errorMessage){
+ObjectArr* objArrConstructor(int size, int cols, int lines, const char* errorMessage){
   ObjectArr* objArr = mallocSpace(sizeof(ObjectArr), errorMessage);
 
   objArr->objects = mallocSpace(sizeof(Object*) * size, errorMessage);
   objArr->length = size;
+  objArr->cols = cols;
+  objArr->lines = lines;
 
   for(int i = 0; i < size; i++){
     objArr->objects[i] = NULL;
@@ -38,6 +40,7 @@ Object* objectConstructor(
   int width,
   int height,
   int speed,
+  ObjectType type,
   bool visible,
   bool wall,
   bool dangerous,
@@ -57,6 +60,7 @@ Object* objectConstructor(
   object->wall = wall;
   object->dangerous = dangerous;
   object->moving = moving;
+  object->type = type;
 
   return object;
 }
@@ -103,22 +107,22 @@ void handleCollisionObjects(
 }
 
 void sortObjArr(ObjectArr* objArr){
-  int maxIdx;
+  int minIdx;
   Object** target = objArr->objects;
   
   for(int i = 0; i < objArr->length - 1; i++){
-    maxIdx = i;
+    minIdx = i;
     for(int j = i + 1; j < objArr->length; j++){
       if(!target[j]) continue;
       if(
-        !target[maxIdx]
-        || target[maxIdx]->pos.y < target[j]->pos.y 
+        !target[minIdx]
+        || target[minIdx]->pos.y > target[j]->pos.y 
       ){
-        maxIdx = j;
+        minIdx = j;
       } 
     }
-    Object* temp = target[maxIdx];
-    target[maxIdx] = target[i];
+    Object* temp = target[minIdx];
+    target[minIdx] = target[i];
     target[i] = temp;
   }
 }

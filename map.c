@@ -7,131 +7,107 @@
 #include "utils.h"
 #include "display.h"
 
-void rocksInit(ObjectArr* rocks, ALLEGRO_BITMAP* sheet){
-  for(int i = 0; i < rocks->length; i++){
-    rocks->objects[i] = objectConstructor(
-      16*15,
-      16*(i+5),
-      spriteConstructor(sheet, 3*16, 16*16, 16, 16, "loadin rock"),
-      0,
-      16,
-      16,
-      16,
-      true,
-      true,
-      true,
-      false,
-      "rocky rock"
-    );
+ObjectArr* initVirtualMap(Map* map){
+  int length = map->width * map->height;
+  ObjectArr* virtualMap = objArrConstructor(
+    length, 
+    map->width, 
+    map->height, 
+    "error allocating virtual map"
+  );
+  virtualMap->length = length;
+  for(int i = 0; i < virtualMap->length; i++)
+    virtualMap->objects[i] = NULL;
+  
+  FILE* codedMap = fopen(MAP1_PATH, "r");
+  if(!codedMap){
+    fprintf(stderr, "Failed to load map from file\n");
+    exit(1);
   }
 
-  sortObjArr(rocks);
-}
+  char* line;
+  int value;
+  for(int i = 0; i < virtualMap->lines && fscanf(codedMap, "%m[^\n]", &line) > 0; i++){
+    fgetc(codedMap);
 
-void sandInit(ObjectArr* sand, ALLEGRO_BITMAP* sheet){
-  for(int i = 0; i < sand->length; i++){
-    sand->objects[i] = objectConstructor(
-      16*(13+i),
-      16*10,
-      spriteConstructor(sheet, 1*16, 8*16, 16, 16, "loading sand"),
-      10,
-      16,
-      16,
-      0,
-      true,
-      false,
-      true,
-      false,
-      "sandy sand"
-    );
-  }
-}
+    char* temp = line;
+    int lineSize;
+    for(int j = 0; j < virtualMap->cols && sscanf(temp, "%d %n", &value, &lineSize) > 0; j++){
+      switch (value){
+        case rock:
+          virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
+            j,
+            i,
+            spriteConstructor(map->_sheet, 3*16, 16*16, 16, 16, "loadin rock"),
+            0,
+            16,
+            16,
+            1,
+            rock,
+            true,
+            true,
+            true,
+            false,
+            "init rock"
+          );
+          
+          break;
+        case wall:
+          virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
+            j,
+            i,
+            spriteConstructor(map->_sheet, 0*16, 8*16, 16, 16, "loding wall"),
+            0,
+            16,
+            16,
+            0,
+            wall,
+            true,
+            true,
+            false,
+            false,
+            "init wall"
+          );
+          break;
 
-void diamondsInit(ObjectArr* diamonds, ALLEGRO_BITMAP* sheet){
-  for(int i = 0; i < diamonds->length; i++){
-    diamonds->objects[i] = objectConstructor(
-      16*(13+i),
-      16*15,
-      spriteConstructor(sheet, 4*16, 8*16, 16, 16, "diamonds"),
-      1000,
-      16,
-      16,
-      16,
-      true,
-      false,
-      true,
-      false,
-      "diamooond"
-    );
-  }
-}
-
-void wallsInit(ObjectArr* walls, ALLEGRO_BITMAP* sheet, Map* map){
-  int k = 0;
-  for(int i = 0; i < map->height; i += map->height - 1){
-    for(int j = 0; j < map->width; j += 1){
-      if(k > walls->length) break;
-
-      walls->objects[k++] = objectConstructor(
-        16*j,
-        16*i,
-        spriteConstructor(sheet, 0*16, 8*16, 16, 16, "walls"),
-        1000,
-        16,
-        16,
-        0,
-        true,
-        true,
-        true,
-        false,
-        "wallls"
-      );
+        case sand:
+          virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
+            j,
+            i,
+            spriteConstructor(map->_sheet, 1*16, 8*16, 16, 16, "loading sand"),
+            10,
+            16,
+            16,
+            0,
+            sand,
+            true,
+            false,
+            false,
+            false,
+            "init sand"
+          );
+        case empty:
+        default:
+          break;
+      }      
+      temp += lineSize;
     }
+    free(line);
   }
+  fclose(codedMap);
 
-  for(int i = 0; i < map->width; i += map->width - 1){
-    for(int j = 0; j < map->height; j += 1){
-      if(k > walls->length) break;
-
-      walls->objects[k++] = objectConstructor(
-        16*i,
-        16*j,
-        spriteConstructor(sheet, 0*16, 8*16, 16, 16, "walls"),
-        1000,
-        16,
-        16,
-        0,
-        true,
-        true,
-        true,
-        false,
-        "wallls"
-      );
-    }
-  }
+  return virtualMap;
 }
 
-Map* mapConstructor(Display* display){
+Map* mapConstructor(Display* display, Point playerPos){
   Map* map = mallocSpace(sizeof(Map), "map pointer null");
 
   map->_sheet = loadSheet("./resources/mapSheet.png");
   map->background = spriteConstructor(map->_sheet, 32, 128, 16, 16, "background");
   map->width = display->bufferWidth / 16;
   map->height = display->bufferHeight / 16;
-  map->rocks = objArrConstructor(5, "failed to malloc rocks");
-  map->sand = objArrConstructor(5, "failed to malloc sand");
-  map->walls = objArrConstructor(5, "failed to malloc walls");
-  map->diamonds = objArrConstructor(5, "failed to malloc diamonds");
-  map->walls = objArrConstructor(
-    map->width*2 + map->height*2, 
-    "failed to malloc walls"
-  );
-
-
-  rocksInit(map->rocks, map->_sheet);
-  sandInit(map->sand, map->_sheet);
-  diamondsInit(map->diamonds, map->_sheet);
-  wallsInit(map->walls, map->_sheet, map);
+  map->virtualMap = initVirtualMap(map);
+  map->playerPos = playerPos;
 
   return map;
 }
@@ -139,45 +115,53 @@ Map* mapConstructor(Display* display){
 void mapDestructor(Map* map){
   if(!map) return;
 
-  objArrDestructor(map->rocks);
-  objArrDestructor(map->sand);
-  objArrDestructor(map->walls);
   spriteDestructor(map->background);
   sheetDestructor(map->_sheet);
+  objArrDestructor(map->virtualMap);
+
   free(map);
 }
 
-void rockHeights(ObjectArr* rocks){
-  Object** target = rocks->objects;
+void rockFall(ObjectArr* rocks){
   for(int i = 0; i < rocks->length; i++){
-    if(!target[i]) continue;
-    printf("rock height: %d\n", target[i]->pos.y);
+    Object* rock = rocks->objects[i];
+    if(!rock) continue;
+
+    rock->pos.y += rock->speed;
   }
-  printf("\n\n");
 }
 
 void updateRocks(ObjectArr* rocks, long int frames, Map* map){
   if(frames % 45 != 0) return;
+  rockFall(rocks);
+}
 
-  Object** target = rocks->objects;
-  for(int i = 0; i < rocks->length; i++){
-    if(!target[i]) continue;
+void updateMapObjects(ObjectArr* virtualMap, long int frames){
+  for(int i = 0; i < virtualMap->lines; i++){
+    for(int j = 0; j < virtualMap->cols; j++){
+      Object* target = virtualMap->objects[i*virtualMap->cols + j];
+      if(!target) continue;
 
-    Point oldPos = target[i]->pos;
-    target[i]->pos.y += target[i]->speed;
-    handleCollisionObjects(target[i], oldPos, map->sand);
-    handleCollisionObjects(target[i], oldPos, map->diamonds);
-    handleCollisionObjects(target[i], oldPos, map->walls);
-    handleCollisionObjects(target[i], oldPos, map->rocks);
+      switch (target->type){
+        case rock:
+          break;
+        
+        case empty:
+        default:
+          break;
+      }
+
+    }
   }
 }
 
-void mapUpdate(Map* map, ALLEGRO_EVENT* event, long int frames){
+void mapUpdate(Map* map, ALLEGRO_EVENT* event, long int frames, Point playerPos){
   if(!map) return;
 
   switch(event->type){
     case ALLEGRO_EVENT_TIMER:
-      updateRocks(map->rocks, frames, map);
+      map->playerPos = playerPos;
+      updateMapObjects(map->virtualMap, frames);
       break;
     default:
       break;
@@ -192,26 +176,31 @@ void drawBackground(Sprite* background, Display* display){
   }
 }
 
-void drawObjArr(ObjectArr* objArr, Display* display){
-  for(int i = 0; i < objArr->length; i++){
-    Object* target = objArr->objects[i];
-    if(!target || !target->visible) continue;
-    al_draw_bitmap(
-      target->_sprite->bitmap,
-      target->pos.x, 
-      target->pos.y, 
-      0
-    );
+void drawVirtualMap(Map* map, Display* display){
+  ObjectArr* virtualMap = map->virtualMap;
+
+  for(int i = 0; i < virtualMap->lines; i++){
+    for(int j = 0; j < virtualMap->cols; j++){
+      Object* target = virtualMap->objects[i*virtualMap->cols + j];
+      if(!target) continue;
+
+      al_draw_bitmap(
+        target->_sprite->bitmap,
+        target->pos.x*16,
+        target->pos.y*16, 
+        0
+      ); 
+    }
   }
+  
+  return;
 }
+
 
 void mapDraw(Map* map, Display* display){
   if(!map) return;
 
   drawBackground(map->background, display);
-  drawObjArr(map->rocks, display);
-  drawObjArr(map->sand, display);
-  drawObjArr(map->diamonds, display);
-  drawObjArr(map->walls, display);
+  drawVirtualMap(map, display);
   
 }

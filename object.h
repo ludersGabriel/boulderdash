@@ -8,6 +8,15 @@
 #include "sprite.h"
 #include "collision.h"
 
+typedef enum OBJECT_TYPE{
+  empty = 0,
+  rock,
+  wall,
+  sand,
+  diamond,
+  objectTypeAmount
+}ObjectType;
+
 typedef struct OBJECT{
   Point pos;
   Sprite* _sprite;
@@ -15,6 +24,7 @@ typedef struct OBJECT{
   int width;
   int height;
   int speed;
+  ObjectType type;
   bool visible;
   bool wall;
   bool dangerous;
@@ -23,10 +33,12 @@ typedef struct OBJECT{
 
 typedef struct OBJECT_ARRAY{
   Object** objects;
+  int cols;
+  int lines;
   int length;
 }ObjectArr;
 
-ObjectArr* objArrConstructor(int size, const char* errorMessage);
+ObjectArr* objArrConstructor(int size, int cols, int lines, const char* errorMessage);
 
 void objArrDestructor(ObjectArr* objArr);
 
@@ -38,6 +50,7 @@ Object* objectConstructor(
   int width,
   int height,
   int speed,
+  ObjectType type,
   bool visible,
   bool wall,
   bool dangerous,
