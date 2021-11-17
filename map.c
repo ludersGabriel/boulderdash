@@ -86,6 +86,23 @@ ObjectArr* initVirtualMap(Map* map){
             false,
             "init sand"
           );
+          break;
+        case diamond:
+          virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
+            j,
+            i,
+            spriteConstructor(map->_sheet, 4*16, 9*16, 16, 16, "loading diamond"),
+            1000,
+            16,
+            16,
+            0,
+            sand,
+            true,
+            false,
+            false,
+            false,
+            "init diamond"
+          );
         case empty:
         default:
           break;
@@ -107,7 +124,8 @@ Map* mapConstructor(Display* display, Point playerPos){
   map->width = display->bufferWidth / 16;
   map->height = display->bufferHeight / 16;
   map->virtualMap = initVirtualMap(map);
-  map->playerPos = playerPos;
+  map->playerPos.x = playerPos.x / 16;
+  map->playerPos.y = playerPos.y / 16;
 
   return map;
 }
@@ -160,7 +178,9 @@ void mapUpdate(Map* map, ALLEGRO_EVENT* event, long int frames, Point playerPos)
 
   switch(event->type){
     case ALLEGRO_EVENT_TIMER:
-      map->playerPos = playerPos;
+      map->playerPos.x = playerPos.x / 16;
+      map->playerPos.y = playerPos.y / 16;
+      printf("player pos in map: (%d,%d)\n", map->playerPos.x, map->playerPos.y);
       updateMapObjects(map->virtualMap, frames);
       break;
     default:
@@ -182,7 +202,7 @@ void drawVirtualMap(Map* map, Display* display){
   for(int i = 0; i < virtualMap->lines; i++){
     for(int j = 0; j < virtualMap->cols; j++){
       Object* target = virtualMap->objects[i*virtualMap->cols + j];
-      if(!target) continue;
+      if(!target || !target->visible) continue;
 
       al_draw_bitmap(
         target->_sprite->bitmap,

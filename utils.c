@@ -20,3 +20,7 @@ void* mallocSpace(int size, const char* desc){
 
   return pointer;
 }
+
+bool comparePoints(Point a, Point b){
+  return a.x == b.x && a.y == b.y;
+}

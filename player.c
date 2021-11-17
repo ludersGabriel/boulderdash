@@ -36,47 +36,48 @@ void playerDestructor(Player* player){
   free(player);
 }
 
-Object* collisionPlayerxObj(Player* player, ObjectArr* objArr){
-  for(int i = 0; i < objArr->length; i++){
-    Object* target = objArr->objects[i];
-    if(!target || !target->visible) continue;
+bool handleCollision(
+  Point playerPos,
+  ObjectArr* virtualMap,
+  long int* score
+){
+  Point paddedPlayerPos;
+  paddedPlayerPos.x = playerPos.x / 16;
+  paddedPlayerPos.y = playerPos.y / 16;
 
-    if(
-      collide(
-        player->currentPos.x,
-        player->currentPos.y,
-        target->pos.x,
-        target->pos.y
-      )
-    ){
-      return target;
+  for(int i = 0; i < virtualMap->lines; i++){
+    for(int j = 0; j < virtualMap->cols; j++){
+      Object* target = virtualMap->objects[i*virtualMap->cols + j];
+      if(
+        !target 
+        || !target->visible
+        || !comparePoints(target->pos, paddedPlayerPos)
+      ){
+        continue;
+      }
+
+      *score += target->score;
+      switch(target->type){
+        case rock:
+        case wall:
+          return true;
+        case diamond:
+        case sand:
+          target->visible = false;
+          break;
+        case empty:
+        default:
+          break;
+      }
+
     }
   }
 
-  return NULL;
-}
-
-void handleCollision(
-  Player* player,
-  Point oldPos, 
-  ObjectArr* objArr, 
-  long int* score
-){
-  Object* target = collisionPlayerxObj(player, objArr);
-  if(!target) return;
-  
-  if(target->wall){
-    player->currentPos = oldPos;
-    return;
-  }
-
-  target->visible = false;
-  *score += target->score;
+  return false;
 }
 
 void controlPlayerMovement(
   Player* player, 
-  Display* display,
   Map* map,
   long int* score
 ){
@@ -101,9 +102,9 @@ void controlPlayerMovement(
   }
 
   if(newPos.x != player->currentPos.x || newPos.y != player->currentPos.y){
-    Point oldPos = player->currentPos;
-    player->currentPos = newPos;
+    if(handleCollision(newPos, map->virtualMap, score)) return;
 
+    player->currentPos = newPos;
     player->fatigue_timer = player->fatigue;
   }
 }
@@ -111,13 +112,12 @@ void controlPlayerMovement(
 void playerUpdate(
   Player* player, 
   ALLEGRO_EVENT* event, 
-  Display* display,
   Map* map,
   long int* score
 ){
   switch(event->type){
     case ALLEGRO_EVENT_TIMER:
-      controlPlayerMovement(player, display, map, score);
+      controlPlayerMovement(player, map, score);
 
       break;
     default:

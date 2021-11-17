@@ -24,8 +24,10 @@ void objArrDestructor(ObjectArr* objArr){
   if(!objArr) return;
 
   for(int i = 0; i < objArr->length; i++){
-    if(!objArr->objects[i]) continue;
-
+    Object* target = objArr->objects[i];
+    if(!target) continue;
+    
+    spriteDestructor(target->_sprite);
     free(objArr->objects[i]);
   }
   free(objArr->objects);

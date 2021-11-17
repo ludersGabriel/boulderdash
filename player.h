@@ -40,7 +40,6 @@ void playerDestructor(Player* player);
 void playerUpdate(
   Player* player, 
   ALLEGRO_EVENT* event, 
-  Display* display,
   Map* map,
   long int* score
 );

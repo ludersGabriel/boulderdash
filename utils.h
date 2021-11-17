@@ -13,6 +13,8 @@ typedef struct POINT{
 
 void* mallocSpace(int size, const char* desc);
 
+bool comparePoints(Point a, Point b);
+
 void checkAllegroComponent(bool component, const char* desc);
 
 #endif

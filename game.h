@@ -9,21 +9,39 @@
 #include "map.h"
 #include "player.h"
 #include "display.h"
+#include "input.h"
+
+typedef enum GAME_STATE{
+  beginning,
+  playing,
+  quit
+}GameState;
 
 typedef struct GAME{
   long frames;
   long score;
+  GameState state;
   Map* map;
   Player* player;
   Display* display;
+  ALLEGRO_TIMER* timer;
+  ALLEGRO_FONT* font;
+  ALLEGRO_EVENT_QUEUE* queue;
+  ALLEGRO_EVENT event;
+  
+  bool redraw;
 }Game;
+
+void allegroInit(Game* game);
 
 Game* gameConstructor();
 
 void gameDestructor(Game* game);
 
-void gameUpdate(Game* game, ALLEGRO_EVENT* event);
+void playGame(Game* game);
 
-void gameDraw(Game* game, ALLEGRO_FONT* font);
+void gameUpdate(Game* game);
+
+void gameDraw(Game* game);
 
 #endif
