@@ -34,7 +34,7 @@ ObjectArr* initVirtualMap(Map* map){
     int lineSize;
     for(int j = 0; j < virtualMap->cols && sscanf(temp, "%d %n", &value, &lineSize) > 0; j++){
       switch (value){
-        case rock:
+        case ROCK:
           virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
             j,
             i,
@@ -43,7 +43,7 @@ ObjectArr* initVirtualMap(Map* map){
             16,
             16,
             1,
-            rock,
+            ROCK,
             true,
             true,
             true,
@@ -52,7 +52,7 @@ ObjectArr* initVirtualMap(Map* map){
           );
           
           break;
-        case wall:
+        case WALL:
           virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
             j,
             i,
@@ -61,7 +61,7 @@ ObjectArr* initVirtualMap(Map* map){
             16,
             16,
             0,
-            wall,
+            WALL,
             true,
             true,
             false,
@@ -70,7 +70,7 @@ ObjectArr* initVirtualMap(Map* map){
           );
           break;
 
-        case sand:
+        case SAND:
           virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
             j,
             i,
@@ -79,7 +79,7 @@ ObjectArr* initVirtualMap(Map* map){
             16,
             16,
             0,
-            sand,
+            SAND,
             true,
             false,
             false,
@@ -87,7 +87,11 @@ ObjectArr* initVirtualMap(Map* map){
             "init sand"
           );
           break;
-        case diamond:
+        case PLAYER:
+          map->playerPos.x = j;
+          map->playerPos.y = i;
+          break;
+        case DIAMOND:
           virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
             j,
             i,
@@ -96,14 +100,14 @@ ObjectArr* initVirtualMap(Map* map){
             16,
             16,
             0,
-            sand,
+            DIAMOND,
             true,
             false,
             false,
             false,
             "init diamond"
           );
-        case empty:
+        case EMPTY:
         default:
           break;
       }      
@@ -116,7 +120,7 @@ ObjectArr* initVirtualMap(Map* map){
   return virtualMap;
 }
 
-Map* mapConstructor(Display* display, Point playerPos){
+Map* mapConstructor(Display* display){
   Map* map = mallocSpace(sizeof(Map), "map pointer null");
 
   map->_sheet = loadSheet("./resources/mapSheet.png");
@@ -124,8 +128,6 @@ Map* mapConstructor(Display* display, Point playerPos){
   map->width = display->bufferWidth / 16;
   map->height = display->bufferHeight / 16;
   map->virtualMap = initVirtualMap(map);
-  map->playerPos.x = playerPos.x / 16;
-  map->playerPos.y = playerPos.y / 16;
 
   return map;
 }
@@ -140,31 +142,87 @@ void mapDestructor(Map* map){
   free(map);
 }
 
-void rockFall(ObjectArr* rocks){
-  for(int i = 0; i < rocks->length; i++){
-    Object* rock = rocks->objects[i];
-    if(!rock) continue;
+Object* objectInPos(ObjectArr* virtualMap, int x, int y){
+  for(int i = 0; i < virtualMap->lines; i++){
+    for(int j = 0; j < virtualMap->cols; j++){
+      Object* target = virtualMap->objects[i * virtualMap->cols + j];
+      if(!target || !target->visible) continue;
 
-    rock->pos.y += rock->speed;
+      if(target->pos.x == x && target->pos.y == y) return target;      
+    }
   }
+  return NULL;
 }
 
-void updateRocks(ObjectArr* rocks, long int frames, Map* map){
-  if(frames % 45 != 0) return;
-  rockFall(rocks);
+void rockFall(Object* rock, ObjectArr* virtualMap){
+  if(objectInPos(virtualMap, rock->pos.x, rock->pos.y + 1)) {
+    rock->state = IDLE;
+    return;
+  }
+  
+  rock->state = FALLING;
+  rock->pos.y += rock->speed;
+}
+
+bool objectInPosIsFalling(ObjectArr* virtualMap, int x, int y){
+  Object* target = objectInPos(virtualMap, x, y);
+  return target && target->state == FALLING;
+}
+
+bool canRoll(Object* rock, ObjectArr* virtualMap){
+  Object* objUnder = objectInPos(virtualMap, rock->pos.x, rock->pos.y + 1);
+  if(!objUnder) return false;
+  if(
+    objUnder->type != ROCK 
+    && objUnder->type != WALL 
+    && objUnder->type != DIAMOND
+  ) return false;
+
+  return true;
+}
+
+bool rockRoll(Object* rock, ObjectArr* virtualMap){
+  if(!canRoll(rock, virtualMap)) return false;
+
+  Object* objRight = objectInPos(virtualMap, rock->pos.x + 1, rock->pos.y);
+  Object* objDownRight = objectInPos(virtualMap, rock->pos.x + 1, rock->pos.y + 1);
+  Object* objLeft = objectInPos(virtualMap, rock->pos.x - 1, rock->pos.y);
+  Object* objDownLeft = objectInPos(virtualMap, rock->pos.x - 1, rock->pos.y + 1);
+
+  if(!objLeft && !objDownLeft){
+    rock->pos.x -= rock->speed;
+    return true;
+  } 
+  else if(!objRight && !objDownRight){
+    rock->pos.x += rock->speed;
+    return true;
+  } 
+  
+
+  return false;
+}
+
+void updateRock(Object* rock, long int frames, ObjectArr* virtualMap){
+  if(frames % 6 != 0) return;
+  bool rolled = rockRoll(rock, virtualMap);
+  if(rolled) return;
+
+  rockFall(rock, virtualMap);
 }
 
 void updateMapObjects(ObjectArr* virtualMap, long int frames){
+  sortObjArr(virtualMap);
   for(int i = 0; i < virtualMap->lines; i++){
     for(int j = 0; j < virtualMap->cols; j++){
       Object* target = virtualMap->objects[i*virtualMap->cols + j];
       if(!target) continue;
 
       switch (target->type){
-        case rock:
+        case ROCK:
+          updateRock(target, frames, virtualMap);
           break;
         
-        case empty:
+        case EMPTY:
         default:
           break;
       }
@@ -180,7 +238,6 @@ void mapUpdate(Map* map, ALLEGRO_EVENT* event, long int frames, Point playerPos)
     case ALLEGRO_EVENT_TIMER:
       map->playerPos.x = playerPos.x / 16;
       map->playerPos.y = playerPos.y / 16;
-      printf("player pos in map: (%d,%d)\n", map->playerPos.x, map->playerPos.y);
       updateMapObjects(map->virtualMap, frames);
       break;
     default:

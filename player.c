@@ -8,13 +8,13 @@
 #include "sprite.h"
 #include "input.h"
 
-Player* playerConstructor(Display* display){
+Player* playerConstructor(Map* map){
   Player* player = mallocSpace(sizeof(Player), "player pointer null");
 
   player->alive = true;
   player->hp = 3;
-  player->startPos.x = display->bufferWidth/2 + (display->bufferWidth/2) % 16;
-  player->startPos.y = display->bufferHeight/2 + (display->bufferHeight/2) % 16;
+  player->startPos.x = map->playerPos.x * 16;
+  player->startPos.y = map->playerPos.y * 16;
   player->currentPos = player->startPos;
   player->width = PLAYER_WIDTH;
   player->height = PLAYER_HEIGHT;
@@ -58,14 +58,14 @@ bool handleCollision(
 
       *score += target->score;
       switch(target->type){
-        case rock:
-        case wall:
+        case ROCK:
+        case WALL:
           return true;
-        case diamond:
-        case sand:
+        case DIAMOND:
+        case SAND:
           target->visible = false;
           break;
-        case empty:
+        case EMPTY:
         default:
           break;
       }

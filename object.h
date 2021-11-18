@@ -9,13 +9,19 @@
 #include "collision.h"
 
 typedef enum OBJECT_TYPE{
-  empty = 0,
-  rock,
-  wall,
-  sand,
-  diamond,
-  objectTypeAmount
+  EMPTY = 0,
+  ROCK,
+  WALL,
+  SAND,
+  DIAMOND,
+  PLAYER,
+  OBJECT_TYPE_AMOUNT
 }ObjectType;
+
+typedef enum OBJECT_STATE{
+  IDLE,
+  FALLING
+}ObjectState;
 
 typedef struct OBJECT{
   Point pos;
@@ -25,6 +31,7 @@ typedef struct OBJECT{
   int height;
   int speed;
   ObjectType type;
+  ObjectState state;
   bool visible;
   bool wall;
   bool dangerous;

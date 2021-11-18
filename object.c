@@ -51,6 +51,7 @@ Object* objectConstructor(
 ){
   Object* object = mallocSpace(sizeof(Object), errorMessage);
 
+  object->state = IDLE;
   object->pos.x = x;
   object->pos.y = y;
   object->score = score;

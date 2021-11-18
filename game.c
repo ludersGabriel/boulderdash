@@ -39,8 +39,8 @@ Game* gameConstructor(){
   game->frames = 0;
   game->score = 0;
   game->redraw = true;
-  game->player = playerConstructor(game->display);
-  game->map = mapConstructor(game->display, game->player->startPos);
+  game->map = mapConstructor(game->display);
+  game->player = playerConstructor(game->map);
   game->state = playing;  
 
   return game;    

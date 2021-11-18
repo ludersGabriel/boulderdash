@@ -33,7 +33,7 @@ typedef struct PLAYER{
   Sprite* _sprite;
 }Player;
 
-Player* playerConstructor(Display* display);
+Player* playerConstructor(Map* map);
 
 void playerDestructor(Player* player);
 

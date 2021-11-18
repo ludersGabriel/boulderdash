@@ -20,7 +20,7 @@ typedef struct MAP{
   Point playerPos;
 }Map;
 
-Map* mapConstructor(Display* display, Point playerPos);
+Map* mapConstructor(Display* display);
 
 void mapDestructor(Map* map);
 
