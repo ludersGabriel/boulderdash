@@ -17,14 +17,17 @@ typedef struct MAP{
   int width;
   int height;
   ObjectArr* virtualMap;
-  Point playerPos;
 }Map;
 
 Map* mapConstructor(Display* display);
 
 void mapDestructor(Map* map);
 
-void mapUpdate(Map* map, ALLEGRO_EVENT* event, long int frames, Point playerPos);
+void mapUpdate(Map* map, ALLEGRO_EVENT* event, long int frames);
+
+void setPlayerPos(Map* map, Point playerPos);
+
+Point getPlayerPos(Map* map);
 
 void mapDraw(Map* map, Display* display);
 

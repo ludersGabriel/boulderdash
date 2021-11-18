@@ -67,7 +67,7 @@ void gameUpdate(Game* game){
     game->map,
     &game->score
   );
-  mapUpdate(game->map, event, game->frames, game->player->currentPos);
+  mapUpdate(game->map, event, game->frames);
 }
 
 void scoreDraw(int score, ALLEGRO_FONT* font){

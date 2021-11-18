@@ -13,8 +13,7 @@ Player* playerConstructor(Map* map){
 
   player->alive = true;
   player->hp = 3;
-  player->startPos.x = map->playerPos.x * 16;
-  player->startPos.y = map->playerPos.y * 16;
+  player->startPos = getPlayerPos(map);
   player->currentPos = player->startPos;
   player->width = PLAYER_WIDTH;
   player->height = PLAYER_HEIGHT;
@@ -101,10 +100,11 @@ void controlPlayerMovement(
     newPos.y += player->speed.y;
   }
 
-  if(newPos.x != player->currentPos.x || newPos.y != player->currentPos.y){
+  if(!comparePoints(newPos, player->currentPos)){
     if(handleCollision(newPos, map->virtualMap, score)) return;
 
     player->currentPos = newPos;
+    setPlayerPos(map, newPos);
     player->fatigue_timer = player->fatigue;
   }
 }
