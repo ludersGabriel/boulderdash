@@ -12,7 +12,7 @@ Player* playerConstructor(Map* map){
   Player* player = mallocSpace(sizeof(Player), "player pointer null");
 
   player->alive = true;
-  player->hp = 3;
+  player->hp = PLAYER_HP;
   player->startPos = getPlayerPos(map);
   player->currentPos = player->startPos;
   player->width = PLAYER_WIDTH;
@@ -25,6 +25,27 @@ Player* playerConstructor(Map* map){
   player->fatigue = PLAYER_FATIGUE;
 
   return player;
+}
+
+bool checkDeath(Map* map){
+  ObjectArr* virtualMap = map->virtualMap;
+
+  for(int i = 0; i < virtualMap->length; i++){
+    Object* target = virtualMap->objects[i];
+    if(
+      !target
+      || !target->visible
+      || target->type == PLAYER
+      || target->state != FALLING
+      || !comparePoints(target->pos, getPaddedPlayerPos(map))
+    ){
+      continue;
+    }
+
+    return true;
+  }
+
+  return false;
 }
 
 void playerDestructor(Player* player){
@@ -115,8 +136,17 @@ void playerUpdate(
   Map* map,
   long int* score
 ){
+  if(!player || !player->alive){
+    printf("alive: %d\n", player->alive);
+    return;
+  }
+
   switch(event->type){
     case ALLEGRO_EVENT_TIMER:
+      if(checkDeath(map)){
+        player->alive = false;
+        return;
+      }
       controlPlayerMovement(player, map, score);
 
       break;

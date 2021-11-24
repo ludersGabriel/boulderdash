@@ -29,6 +29,8 @@ void setPlayerPos(Map* map, Point playerPos);
 
 Point getPlayerPos(Map* map);
 
+Point getPaddedPlayerPos(Map* map);
+
 void mapDraw(Map* map, Display* display);
 
 #endif

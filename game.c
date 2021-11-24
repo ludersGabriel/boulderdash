@@ -56,6 +56,25 @@ void gameDestructor(Game* game){
   free(game);
 }
 
+void resetLevel(Game* game){
+  Player* player = game->player;
+  if(player->alive) return;
+
+  ObjectArr* virtualMap = game->map->virtualMap;
+  for(int i = 0; i < virtualMap->length; i++){
+    Object* target = virtualMap->objects[i];
+    if(!target) continue;
+
+    target->visible = true;
+    target->state = IDLE;
+    target->pos = target->initialPos;
+  }
+
+  player->currentPos = player->startPos;
+  player->alive = true;
+  player->hp -= 1;  
+}
+
 void gameUpdate(Game* game){
   ALLEGRO_EVENT* event = &game->event;
   
@@ -67,6 +86,7 @@ void gameUpdate(Game* game){
     game->map,
     &game->score
   );
+  resetLevel(game);
   mapUpdate(game->map, event, game->frames);
 }
 

@@ -25,6 +25,7 @@ typedef enum OBJECT_STATE{
 
 typedef struct OBJECT{
   Point pos;
+  Point initialPos;
   Sprite* _sprite;
   int score;
   int width;

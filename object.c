@@ -54,6 +54,8 @@ Object* objectConstructor(
   object->state = IDLE;
   object->pos.x = x;
   object->pos.y = y;
+  object->initialPos.x = x;
+  object->initialPos.y = y;
   object->score = score;
   object->width = width;
   object->height = height;

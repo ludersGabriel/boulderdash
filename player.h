@@ -17,6 +17,7 @@
 #define PLAYER_SPPED_Y 16
 #define PLAYER_WIDTH 16
 #define PLAYER_HEIGHT 16
+#define PLAYER_HP 3
 
 typedef struct PLAYER{
   int hp;

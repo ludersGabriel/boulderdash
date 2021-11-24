@@ -112,7 +112,7 @@ ObjectArr* initVirtualMap(Map* map){
             1000,
             16,
             16,
-            0,
+            1,
             DIAMOND,
             true,
             false,
@@ -171,6 +171,22 @@ Point getPlayerPos(Map* map){
   return point;
 }
 
+Point getPaddedPlayerPos(Map* map){
+  ObjectArr* virtualMap = map->virtualMap;
+  Point point;
+  point.x = point.y = 1;
+
+  for(int i = 0; i < virtualMap->length; i++){
+    Object* target = virtualMap->objects[i];
+    if(!target || !target->visible || target->type != PLAYER) continue;
+
+    point.x = target->pos.x;
+    point.y = target->pos.y;
+  }
+
+  return point;
+}
+
 void setPlayerPos(Map* map, Point playerPos){
   ObjectArr* virtualMap = map->virtualMap;
 
@@ -185,21 +201,22 @@ void setPlayerPos(Map* map, Point playerPos){
 }
 
 Object* objectInPos(ObjectArr* virtualMap, int x, int y){
-  for(int i = 0; i < virtualMap->lines; i++){
-    for(int j = 0; j < virtualMap->cols; j++){
-      Object* target = virtualMap->objects[i * virtualMap->cols + j];
+  for(int i = 0; i < virtualMap->length; i++){
+      Object* target = virtualMap->objects[i];
       if(!target || !target->visible) continue;
 
-      if(target->pos.x == x && target->pos.y == y) return target;      
-    }
+      if(target->pos.x == x && target->pos.y == y) return target;   
   }
+  
   return NULL;
 }
 
 void objectFall(Object* target, Map* map){
   ObjectArr* virtualMap = map->virtualMap;
 
-  if(objectInPos(virtualMap, target->pos.x, target->pos.y + 1)) {
+  Object* objUnder =objectInPos(virtualMap, target->pos.x, target->pos.y + 1);
+  if(objUnder && !(target->state == FALLING && objUnder->type == PLAYER)) {
+
     target->state = IDLE;
     return;
   }
@@ -235,12 +252,20 @@ bool objectRoll(Object* target, Map* map){
   Object* objLeft = objectInPos(virtualMap, target->pos.x - 1, target->pos.y);
   Object* objDownLeft = objectInPos(virtualMap, target->pos.x - 1, target->pos.y + 1);
 
-  if(!objLeft && !objDownLeft){
+  if(
+    (!objLeft && !objDownLeft )
+    || (!objLeft && target->state == FALLING && objDownLeft->type == PLAYER)
+  ){
     target->pos.x -= target->speed;
+    target->state = FALLING;
     return true;
   } 
-  else if(!objRight && !objDownRight){
+  else if(
+    (!objRight && !objDownRight)
+    || (!objRight && target->state == FALLING && objDownRight->type == PLAYER)
+  ){
     target->pos.x += target->speed;
+    target->state = FALLING;
     return true;
   } 
   
@@ -249,7 +274,7 @@ bool objectRoll(Object* target, Map* map){
 }
 
 void updateRock(Object* rock, long int frames, Map* map){
-  if(frames % 7 != 0) return;
+  if(frames % 6 != 0) return;
   bool rolled = objectRoll(rock, map);
   if(rolled) return;
 
@@ -262,18 +287,17 @@ void updateMapObjects(Map* map, long int frames){
   for(int i = 0; i < virtualMap->lines; i++){
     for(int j = 0; j < virtualMap->cols; j++){
       Object* target = virtualMap->objects[i*virtualMap->cols + j];
-      if(!target) continue;
+      if(!target || !target->visible) continue;
 
       switch (target->type){
+        case DIAMOND:
         case ROCK:
           updateRock(target, frames, map);
           break;
-        
         case EMPTY:
         default:
           break;
       }
-
     }
   }
 }
