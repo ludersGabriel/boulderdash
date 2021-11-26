@@ -25,6 +25,14 @@ ObjectArr* initVirtualMap(Map* map){
     exit(1);
   }
 
+  char aux[10];
+  fgets(aux, 10, codedMap);
+  map->necessaryDiamonds = atoi(aux);
+  fgets(aux, 10, codedMap);
+  map->diamondValue = atoi(aux);
+  fgets(aux, 10, codedMap);
+  map->maxTime = atoi(aux);
+
   char* line;
   int value;
   for(int i = 0; i < virtualMap->lines && fscanf(codedMap, "%m[^\n]", &line) > 0; i++){
@@ -75,7 +83,7 @@ ObjectArr* initVirtualMap(Map* map){
             j,
             i,
             spriteConstructor(map->_sheet, 1*TILE_SIZE, 8*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loading sand"),
-            10,
+            0,
             TILE_SIZE,
             TILE_SIZE,
             0,
@@ -92,7 +100,7 @@ ObjectArr* initVirtualMap(Map* map){
             j,
             i,
             NULL,
-            10,
+            0,
             TILE_SIZE,
             TILE_SIZE,
             0,
@@ -109,7 +117,7 @@ ObjectArr* initVirtualMap(Map* map){
             j,
             i,
             spriteConstructor(map->_sheet, 4*TILE_SIZE, 9*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loading diamond"),
-            1000,
+            map->diamondValue,
             TILE_SIZE,
             TILE_SIZE,
             1,
@@ -225,11 +233,6 @@ void objectFall(Object* target, Map* map){
   target->pos.y += target->speed;
 }
 
-bool objectInPosIsFalling(ObjectArr* virtualMap, int x, int y){
-  Object* target = objectInPos(virtualMap, x, y);
-  return target && target->state == FALLING;
-}
-
 bool canRoll(Object* target, ObjectArr* virtualMap){
   Object* objUnder = objectInPos(virtualMap, target->pos.x, target->pos.y + 1);
   if(!objUnder) return false;
@@ -274,7 +277,7 @@ bool objectRoll(Object* target, Map* map){
 }
 
 void updateRock(Object* rock, long int frames, Map* map){
-  if(frames % 6 != 0) return;
+  if(frames % 8 != 0) return;
   bool rolled = objectRoll(rock, map);
   if(rolled) return;
 

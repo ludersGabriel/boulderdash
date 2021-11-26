@@ -23,6 +23,8 @@ Player* playerConstructor(Map* map){
   player->_sprite = spriteConstructor(player->_sheet, 0, 0, TILE_SIZE, TILE_SIZE, "player sprite");
   player->fatigue_timer = 0;
   player->fatigue = PLAYER_FATIGUE;
+  player->diamondHeld = 0;
+  player->scoreMultiplier = 1;
 
   return player;
 }
@@ -57,14 +59,16 @@ void playerDestructor(Player* player){
 }
 
 bool handleCollision(
-  Point playerPos,
+  Player* player,
+  Point newPos,
   int xDiff,
-  ObjectArr* virtualMap,
+  Map* map,
   long int* score
 ){
   Point paddedPlayerPos;
-  paddedPlayerPos.x = playerPos.x / TILE_SIZE;
-  paddedPlayerPos.y = playerPos.y / TILE_SIZE;
+  ObjectArr* virtualMap = map->virtualMap;
+  paddedPlayerPos.x = newPos.x / TILE_SIZE;
+  paddedPlayerPos.y = newPos.y / TILE_SIZE;
 
   for(int i = 0; i < virtualMap->lines; i++){
     for(int j = 0; j < virtualMap->cols; j++){
@@ -77,7 +81,6 @@ bool handleCollision(
         continue;
       }
 
-      *score += target->score;
       switch(target->type){
         case ROCK:
           if(
@@ -91,6 +94,14 @@ bool handleCollision(
         case WALL:
           return true;
         case DIAMOND:
+          player->diamondHeld += 1;
+          *score += target->score * player->scoreMultiplier;
+          if(
+            player->diamondHeld >= map->necessaryDiamonds
+            && player->scoreMultiplier < 1.5
+          ){
+            player->scoreMultiplier = 1.5;
+          }
         case SAND:
           target->visible = false;
           break;
@@ -132,7 +143,7 @@ void controlPlayerMovement(
 
   if(!comparePoints(newPos, player->currentPos)){
     int xDiff = (newPos.x - player->currentPos.x)/TILE_SIZE;
-    if(handleCollision(newPos, xDiff, map->virtualMap, score)) return;
+    if(handleCollision(player, newPos, xDiff, map, score)) return;
 
     player->currentPos = newPos;
     setPlayerPos(map, newPos);

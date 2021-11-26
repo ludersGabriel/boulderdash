@@ -10,6 +10,7 @@
 #include "player.h"
 #include "display.h"
 #include "input.h"
+#include "hud.h"
 
 typedef enum GAME_STATE{
   beginning,
@@ -20,6 +21,7 @@ typedef enum GAME_STATE{
 typedef struct GAME{
   long frames;
   long score;
+  int timeAvailabe;
   GameState state;
   Map* map;
   Player* player;

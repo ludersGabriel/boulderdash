@@ -16,6 +16,9 @@ typedef struct MAP{
   Sprite* background;
   int width;
   int height;
+  int necessaryDiamonds;
+  int diamondValue;
+  int maxTime;
   ObjectArr* virtualMap;
 }Map;
 

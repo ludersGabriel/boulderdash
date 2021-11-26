@@ -31,6 +31,12 @@ void allegroInit(Game* game){
 
 }
 
+void countTime(int* time, int frames){
+  if(frames % 60 != 0) return;
+
+  *time -= 1;
+}
+
 Game* gameConstructor(){
   Game* game = mallocSpace(sizeof(Game), "game pointer null");
 
@@ -40,6 +46,7 @@ Game* gameConstructor(){
   game->score = 0;
   game->redraw = true;
   game->map = mapConstructor(game->display);
+  game->timeAvailabe = game->map->maxTime;
   game->player = playerConstructor(game->map);
   game->state = playing;  
 
@@ -58,7 +65,7 @@ void gameDestructor(Game* game){
 
 void resetLevel(Game* game){
   Player* player = game->player;
-  if(player->alive) return;
+  if(player->alive && game->timeAvailabe != -1) return;
 
   ObjectArr* virtualMap = game->map->virtualMap;
   for(int i = 0; i < virtualMap->length; i++){
@@ -68,11 +75,15 @@ void resetLevel(Game* game){
     target->visible = true;
     target->state = IDLE;
     target->pos = target->initialPos;
+
+    if(target->type == DIAMOND)
+      target->score = game->map->diamondValue;
   }
 
   player->currentPos = player->startPos;
   player->alive = true;
-  player->hp -= 1;  
+  player->diamondHeld = 0;
+  game->timeAvailabe = game->map->maxTime;
 }
 
 void gameUpdate(Game* game){
@@ -87,19 +98,25 @@ void gameUpdate(Game* game){
     &game->score
   );
   resetLevel(game);
+  countTime(&game->timeAvailabe, game->frames);
   mapUpdate(game->map, event, game->frames);
 }
 
-void scoreDraw(int score, ALLEGRO_FONT* font){
-  al_draw_textf(font, al_map_rgb(255, 255, 255), 0, 0, 0, "Score: %d", score);
-}
+
 
 void gameDraw(Game* game){
   if(!game) return;
 
   mapDraw(game->map, game->display);
   playerDraw(game->player);
-  scoreDraw(game->score, game->font);
+  drawHud(
+    game->score, 
+    game->map->necessaryDiamonds, 
+    game->player->diamondHeld,
+    game->map->diamondValue * game->player->scoreMultiplier, 
+    game->timeAvailabe, 
+    game->font
+  );
 }
 
 void playGame(Game* game){

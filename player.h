@@ -12,7 +12,7 @@
 #include "collision.h"
 #include "map.h"
 
-#define PLAYER_FATIGUE 5
+#define PLAYER_FATIGUE 7
 #define PLAYER_SPEED_X 16
 #define PLAYER_SPPED_Y 16
 #define PLAYER_WIDTH 16
@@ -29,7 +29,8 @@ typedef struct PLAYER{
   int height;
   int fatigue_timer;
   int fatigue;
-
+  int diamondHeld;
+  float scoreMultiplier;
   ALLEGRO_BITMAP* _sheet;
   Sprite* _sprite;
 }Player;
