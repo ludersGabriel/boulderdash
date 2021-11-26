@@ -38,10 +38,10 @@ ObjectArr* initVirtualMap(Map* map){
           virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
             j,
             i,
-            spriteConstructor(map->_sheet, 3*16, 16*16, 16, 16, "loadin rock"),
+            spriteConstructor(map->_sheet, 3*TILE_SIZE, TILE_SIZE*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loadin rock"),
             0,
-            16,
-            16,
+            TILE_SIZE,
+            TILE_SIZE,
             1,
             ROCK,
             true,
@@ -56,10 +56,10 @@ ObjectArr* initVirtualMap(Map* map){
           virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
             j,
             i,
-            spriteConstructor(map->_sheet, 0*16, 8*16, 16, 16, "loding wall"),
+            spriteConstructor(map->_sheet, 0*TILE_SIZE, 8*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loding wall"),
             0,
-            16,
-            16,
+            TILE_SIZE,
+            TILE_SIZE,
             0,
             WALL,
             true,
@@ -74,10 +74,10 @@ ObjectArr* initVirtualMap(Map* map){
           virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
             j,
             i,
-            spriteConstructor(map->_sheet, 1*16, 8*16, 16, 16, "loading sand"),
+            spriteConstructor(map->_sheet, 1*TILE_SIZE, 8*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loading sand"),
             10,
-            16,
-            16,
+            TILE_SIZE,
+            TILE_SIZE,
             0,
             SAND,
             true,
@@ -93,8 +93,8 @@ ObjectArr* initVirtualMap(Map* map){
             i,
             NULL,
             10,
-            16,
-            16,
+            TILE_SIZE,
+            TILE_SIZE,
             0,
             PLAYER,
             true,
@@ -108,10 +108,10 @@ ObjectArr* initVirtualMap(Map* map){
           virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
             j,
             i,
-            spriteConstructor(map->_sheet, 4*16, 9*16, 16, 16, "loading diamond"),
+            spriteConstructor(map->_sheet, 4*TILE_SIZE, 9*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loading diamond"),
             1000,
-            16,
-            16,
+            TILE_SIZE,
+            TILE_SIZE,
             1,
             DIAMOND,
             true,
@@ -137,9 +137,9 @@ Map* mapConstructor(Display* display){
   Map* map = mallocSpace(sizeof(Map), "map pointer null");
 
   map->_sheet = loadSheet("./resources/mapSheet.png");
-  map->background = spriteConstructor(map->_sheet, 32, 128, 16, 16, "background");
-  map->width = display->bufferWidth / 16;
-  map->height = display->bufferHeight / 16;
+  map->background = spriteConstructor(map->_sheet, 32, 128, TILE_SIZE, TILE_SIZE, "background");
+  map->width = display->bufferWidth / TILE_SIZE;
+  map->height = display->bufferHeight / TILE_SIZE;
   map->virtualMap = initVirtualMap(map);
 
   return map;
@@ -164,8 +164,8 @@ Point getPlayerPos(Map* map){
     Object* target = virtualMap->objects[i];
     if(!target || !target->visible || target->type != PLAYER) continue;
 
-    point.x = target->pos.x * 16;
-    point.y = target->pos.y * 16;
+    point.x = target->pos.x * TILE_SIZE;
+    point.y = target->pos.y * TILE_SIZE;
   }
 
   return point;
@@ -194,8 +194,8 @@ void setPlayerPos(Map* map, Point playerPos){
     Object* target = virtualMap->objects[i];
     if(!target || !target->visible || target->type != PLAYER) continue;
 
-    target->pos.x = playerPos.x / 16;
-    target->pos.y = playerPos.y /16;
+    target->pos.x = playerPos.x / TILE_SIZE;
+    target->pos.y = playerPos.y /TILE_SIZE;
   }
 
 }
@@ -315,7 +315,7 @@ void mapUpdate(Map* map, ALLEGRO_EVENT* event, long int frames){
 }
 
 void drawBackground(Sprite* background, Display* display){
-  for(int i = 16; i < display->bufferHeight; i += background->height){
+  for(int i = TILE_SIZE; i < display->bufferHeight; i += background->height){
     for(int j = 0; j < display->bufferWidth; j += background->width){
       al_draw_bitmap(background->bitmap, j, i, 0);
     }
@@ -336,8 +336,8 @@ void drawVirtualMap(Map* map, Display* display){
         default: 
           al_draw_bitmap(
             target->_sprite->bitmap,
-            target->pos.x*16,
-            target->pos.y*16, 
+            target->pos.x*TILE_SIZE,
+            target->pos.y*TILE_SIZE, 
             0
           ); 
       }

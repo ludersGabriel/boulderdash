@@ -4,6 +4,8 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
+#define TILE_SIZE 16
+
 #include <allegro5/allegro5.h>
 
 typedef struct SPRITE{

@@ -20,7 +20,7 @@ Player* playerConstructor(Map* map){
   player->speed.x = PLAYER_SPEED_X;
   player->speed.y = PLAYER_SPPED_Y; 
   player->_sheet = loadSheet("./resources/playerSheet.png");
-  player->_sprite = spriteConstructor(player->_sheet, 0, 0, 16, 16, "player sprite");
+  player->_sprite = spriteConstructor(player->_sheet, 0, 0, TILE_SIZE, TILE_SIZE, "player sprite");
   player->fatigue_timer = 0;
   player->fatigue = PLAYER_FATIGUE;
 
@@ -63,8 +63,8 @@ bool handleCollision(
   long int* score
 ){
   Point paddedPlayerPos;
-  paddedPlayerPos.x = playerPos.x / 16;
-  paddedPlayerPos.y = playerPos.y / 16;
+  paddedPlayerPos.x = playerPos.x / TILE_SIZE;
+  paddedPlayerPos.y = playerPos.y / TILE_SIZE;
 
   for(int i = 0; i < virtualMap->lines; i++){
     for(int j = 0; j < virtualMap->cols; j++){
@@ -131,7 +131,7 @@ void controlPlayerMovement(
   }
 
   if(!comparePoints(newPos, player->currentPos)){
-    int xDiff = (newPos.x - player->currentPos.x)/16;
+    int xDiff = (newPos.x - player->currentPos.x)/TILE_SIZE;
     if(handleCollision(newPos, xDiff, map->virtualMap, score)) return;
 
     player->currentPos = newPos;
