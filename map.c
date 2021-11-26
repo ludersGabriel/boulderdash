@@ -315,7 +315,7 @@ void mapUpdate(Map* map, ALLEGRO_EVENT* event, long int frames){
 }
 
 void drawBackground(Sprite* background, Display* display){
-  for(int i = 0; i < display->bufferHeight; i += background->height){
+  for(int i = 16; i < display->bufferHeight; i += background->height){
     for(int j = 0; j < display->bufferWidth; j += background->width){
       al_draw_bitmap(background->bitmap, j, i, 0);
     }

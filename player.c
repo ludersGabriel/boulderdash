@@ -58,6 +58,7 @@ void playerDestructor(Player* player){
 
 bool handleCollision(
   Point playerPos,
+  int xDiff,
   ObjectArr* virtualMap,
   long int* score
 ){
@@ -79,6 +80,14 @@ bool handleCollision(
       *score += target->score;
       switch(target->type){
         case ROCK:
+          if(
+            target->state == IDLE 
+            && xDiff
+            && !objectInPos(virtualMap, target->pos.x + xDiff, target->pos.y)
+          ){
+            target->pos.x += xDiff;
+            return false;
+          }
         case WALL:
           return true;
         case DIAMOND:
@@ -122,7 +131,8 @@ void controlPlayerMovement(
   }
 
   if(!comparePoints(newPos, player->currentPos)){
-    if(handleCollision(newPos, map->virtualMap, score)) return;
+    int xDiff = (newPos.x - player->currentPos.x)/16;
+    if(handleCollision(newPos, xDiff, map->virtualMap, score)) return;
 
     player->currentPos = newPos;
     setPlayerPos(map, newPos);
@@ -137,7 +147,6 @@ void playerUpdate(
   long int* score
 ){
   if(!player || !player->alive){
-    printf("alive: %d\n", player->alive);
     return;
   }
 
