@@ -38,6 +38,7 @@ Object* objectConstructor(
   int x,
   int y,
   Sprite* _sprite,
+  Animation* anim,
   int score,
   int width,
   int height,
@@ -66,6 +67,7 @@ Object* objectConstructor(
   object->dangerous = dangerous;
   object->moving = moving;
   object->type = type;
+  object->anim = anim;
 
   return object;
 }
@@ -74,6 +76,8 @@ void objectDestructor(Object* object){
   if(!object) return;
 
   spriteDestructor(object->_sprite);
+  if(object->anim)
+    free(object->anim);
   free(object);
 }
 

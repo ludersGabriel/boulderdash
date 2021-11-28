@@ -2,7 +2,7 @@
 #   GRR20190172 
 
 # Variaveis
-CFLAGS = -Wall -std=c99 -g
+CFLAGS = -Wall -std=c99
 LDLIBS = -lallegro -lallegro_font -lallegro_primitives -lallegro_audio -lallegro_acodec -lallegro_image -lm
 CC = gcc 
 OBJ = main.o game.o input.o display.o utils.o map.o sprite.o player.o object.o collision.o hud.o animation.o

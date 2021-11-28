@@ -7,6 +7,7 @@
 #include "utils.h"
 #include "sprite.h"
 #include "collision.h"
+#include "animation.h"
 
 typedef enum OBJECT_TYPE{
   EMPTY = 0,
@@ -28,6 +29,7 @@ typedef struct OBJECT{
   Point pos;
   Point initialPos;
   Sprite* _sprite;
+  Animation* anim;
   int score;
   int width;
   int height;
@@ -55,6 +57,7 @@ Object* objectConstructor(
   int x,
   int y,
   Sprite* _sprite,
+  Animation* anim,
   int score,
   int width,
   int height,

@@ -47,6 +47,7 @@ ObjectArr* initVirtualMap(Map* map){
             j,
             i,
             spriteConstructor(map->_sheet, 3*TILE_SIZE, TILE_SIZE*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loadin rock"),
+            NULL,
             0,
             TILE_SIZE,
             TILE_SIZE,
@@ -65,6 +66,7 @@ ObjectArr* initVirtualMap(Map* map){
             j,
             i,
             spriteConstructor(map->_sheet, 0*TILE_SIZE, 8*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loding wall"),
+            NULL,
             0,
             TILE_SIZE,
             TILE_SIZE,
@@ -83,6 +85,7 @@ ObjectArr* initVirtualMap(Map* map){
             j,
             i,
             spriteConstructor(map->_sheet, 1*TILE_SIZE, 8*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loading sand"),
+            NULL,
             0,
             TILE_SIZE,
             TILE_SIZE,
@@ -99,6 +102,7 @@ ObjectArr* initVirtualMap(Map* map){
           virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
             j,
             i,
+            NULL,
             NULL,
             0,
             TILE_SIZE,
@@ -117,6 +121,7 @@ ObjectArr* initVirtualMap(Map* map){
             j,
             i,
             spriteConstructor(map->_sheet, 4*TILE_SIZE, 9*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loading diamond"),
+            animConstructor(4, 8, 4, 0, 8, map->_sheet),
             map->diamondValue,
             TILE_SIZE,
             TILE_SIZE,
@@ -134,6 +139,7 @@ ObjectArr* initVirtualMap(Map* map){
             j,
             i,
             spriteConstructor(map->_sheet, 7*TILE_SIZE, 8*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loading door"),
+            animConstructor(7, 8, 4, 0, 10, map->_sheet),
             0,
             TILE_SIZE,
             TILE_SIZE,
@@ -343,7 +349,7 @@ void drawBackground(Sprite* background, Display* display){
   }
 }
 
-void drawVirtualMap(Map* map, Display* display){
+void drawVirtualMap(Map* map, Display* display, int frames){
   ObjectArr* virtualMap = map->virtualMap;
 
   for(int i = 0; i < virtualMap->lines; i++){
@@ -351,16 +357,28 @@ void drawVirtualMap(Map* map, Display* display){
       Object* target = virtualMap->objects[i*virtualMap->cols + j];
       if(!target || !target->visible) continue;
 
+      Point unppadedPos;
+      unppadedPos.x = target->pos.x * TILE_SIZE;
+      unppadedPos.y = target->pos.y * TILE_SIZE;
       switch(target->type){
         case PLAYER:
           break;
         default: 
-          al_draw_bitmap(
-            target->_sprite->bitmap,
-            target->pos.x*TILE_SIZE,
-            target->pos.y*TILE_SIZE, 
-            0
-          ); 
+          if(target->anim){
+            playAnimation(
+              target->anim,
+              &unppadedPos,
+              frames,
+              false
+            );
+          }
+          else
+            al_draw_bitmap(
+              target->_sprite->bitmap,
+              target->pos.x*TILE_SIZE,
+              target->pos.y*TILE_SIZE, 
+              0
+            ); 
       }
     }
   }
@@ -369,10 +387,10 @@ void drawVirtualMap(Map* map, Display* display){
 }
 
 
-void mapDraw(Map* map, Display* display){
+void mapDraw(Map* map, Display* display, int frames){
   if(!map) return;
 
   drawBackground(map->background, display);
-  drawVirtualMap(map, display);
+  drawVirtualMap(map, display, frames);
   
 }

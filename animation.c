@@ -29,20 +29,32 @@ Animation* animConstructor(
 void playAnimation(
   Animation* anim,
   Point* pos,
-  int frames
+  int frames,
+  bool horizontal
 ){
   if(!anim) return;
 
-  al_draw_bitmap_region(
-    anim->sheet,
-    anim->x + TILE_SIZE*anim->currentFrame,
-    anim->y,
-    TILE_SIZE,
-    TILE_SIZE,
-    pos->x,
-    pos->y,
-    0
-  );
+  horizontal 
+    ? al_draw_bitmap_region(
+        anim->sheet,
+        anim->x + TILE_SIZE*anim->currentFrame,
+        anim->y,
+        TILE_SIZE,
+        TILE_SIZE,
+        pos->x,
+        pos->y,
+        0
+      )
+    : al_draw_bitmap_region(
+        anim->sheet,
+        anim->x,
+        anim->y + TILE_SIZE*anim->currentFrame,
+        TILE_SIZE,
+        TILE_SIZE,
+        pos->x,
+        pos->y,
+        0
+      );
 
   if(frames % anim->refreshRate == 0){
     anim->currentFrame += 1;

@@ -36,6 +36,6 @@ Point getPaddedPlayerPos(Map* map);
 
 Object* objectInPos(ObjectArr* virtualMap, int x, int y);
 
-void mapDraw(Map* map, Display* display);
+void mapDraw(Map* map, Display* display, int frames);
 
 #endif

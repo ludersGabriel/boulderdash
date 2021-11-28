@@ -44,7 +44,6 @@ typedef struct PLAYER{
   int diamondHeld;
   float scoreMultiplier;
   ALLEGRO_BITMAP* _sheet;
-  Sprite* _sprite;
   Animation* idleAnim;
   Animation* leftAnim;
   Animation* rightAnim;

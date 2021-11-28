@@ -161,7 +161,7 @@ void endScreen(Game* game){
 void gameDraw(Game* game){
   if(!game) return;
 
-  mapDraw(game->map, game->display);
+  mapDraw(game->map, game->display, game->frames);
   playerDraw(game->player, game->frames);
   drawHud(
     game->score, 

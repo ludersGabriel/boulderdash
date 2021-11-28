@@ -28,7 +28,8 @@ Animation* animConstructor(
 void playAnimation(
   Animation* anim,
   Point* pos,
-  int frames
+  int frames,
+  bool horizontal
 );
 
 

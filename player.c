@@ -20,7 +20,6 @@ Player* playerConstructor(Map* map){
   player->speed.x = PLAYER_SPEED_X;
   player->speed.y = PLAYER_SPPED_Y; 
   player->_sheet = loadSheet("./resources/playerSheet.png");
-  player->_sprite = spriteConstructor(player->_sheet, 0, 0, TILE_SIZE, TILE_SIZE, "player sprite");
   player->fatigue_timer = 0;
   player->fatigue = PLAYER_FATIGUE;
   player->diamondHeld = 0;
@@ -59,7 +58,6 @@ void playerDestructor(Player* player){
   if(!player) return;
   
   sheetDestructor(player->_sheet);
-  spriteDestructor(player->_sprite);
   free(player->idleAnim);
   free(player->leftAnim);
   free(player->rightAnim);
@@ -207,22 +205,22 @@ void playerDraw(Player* player, int frames){
 
   switch(player->state){
     case PLAYER_IDLE:
-      playAnimation(player->idleAnim, &player->currentPos, frames);
+      playAnimation(player->idleAnim, &player->currentPos, frames, true);
       break;
     case MOVING_RIGHT:
-      playAnimation(player->rightAnim, &player->currentPos, frames);
+      playAnimation(player->rightAnim, &player->currentPos, frames, true);
       break;
     case MOVING_LEFT:
-      playAnimation(player->leftAnim, &player->currentPos, frames);
+      playAnimation(player->leftAnim, &player->currentPos, frames, true);
       break;
     case MOVING_DOWN:
     case MOVING_UP:
       if(player->lastHorizontal == MOVING_RIGHT){
-        playAnimation(player->rightAnim, &player->currentPos, frames);
+        playAnimation(player->rightAnim, &player->currentPos, frames, true);
         break;
       }
 
-      playAnimation(player->leftAnim, &player->currentPos, frames);
+      playAnimation(player->leftAnim, &player->currentPos, frames, true);
       break;
     default:
       break;
