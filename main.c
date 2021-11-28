@@ -19,12 +19,18 @@
 int main(void){
 	Game* game = gameConstructor();
 
-	for(al_start_timer(game->timer); game->state != quit;){
+	for(al_start_timer(game->timer); game->state != QUIT;){
 		switch(game->state){
-			case playing: 
+			case PLAYING: 
 				playGame(game);
 				break;
-			case quit:
+			case END_INIT:
+				endInit(game);
+				break;
+			case END:
+				endScreen(game);
+				break;
+			case QUIT:
 			default:
 				break;
 		}

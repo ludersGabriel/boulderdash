@@ -17,4 +17,8 @@ bool comparePoints(Point a, Point b);
 
 void checkAllegroComponent(bool component, const char* desc);
 
+int indexOfSmallest(int* arr, int length);
+
+void sortArray(int* arr, int length);
+
 #endif

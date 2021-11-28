@@ -128,6 +128,24 @@ ObjectArr* initVirtualMap(Map* map){
             false,
             "init diamond"
           );
+          break;
+        case DOOR:
+          virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
+            j,
+            i,
+            spriteConstructor(map->_sheet, 7*TILE_SIZE, 8*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loading door"),
+            0,
+            TILE_SIZE,
+            TILE_SIZE,
+            0,
+            DOOR,
+            true,
+            false,
+            false,
+            false,
+            "init door"
+          );
+          break;
         case EMPTY:
         default:
           break;

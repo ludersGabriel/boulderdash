@@ -15,6 +15,7 @@ typedef enum OBJECT_TYPE{
   SAND,
   DIAMOND,
   PLAYER,
+  DOOR,
   OBJECT_TYPE_AMOUNT
 }ObjectType;
 

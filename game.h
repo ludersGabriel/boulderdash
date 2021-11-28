@@ -12,16 +12,23 @@
 #include "input.h"
 #include "hud.h"
 
+#define RANK_PATH "./resources/score.txt"
+#define RANKING_SIZE 10
+
 typedef enum GAME_STATE{
-  beginning,
-  playing,
-  quit
+  BEGINNING,
+  PLAYING,
+  QUIT,
+  END_INIT,
+  END
 }GameState;
 
 typedef struct GAME{
   long frames;
   long score;
   int timeAvailabe;
+  bool redraw;
+  int ranking[RANKING_SIZE];
   GameState state;
   Map* map;
   Player* player;
@@ -30,8 +37,6 @@ typedef struct GAME{
   ALLEGRO_FONT* font;
   ALLEGRO_EVENT_QUEUE* queue;
   ALLEGRO_EVENT event;
-  
-  bool redraw;
 }Game;
 
 void allegroInit(Game* game);
@@ -45,5 +50,9 @@ void playGame(Game* game);
 void gameUpdate(Game* game);
 
 void gameDraw(Game* game);
+
+void endScreen(Game* game);
+
+void endInit(Game* game);
 
 #endif

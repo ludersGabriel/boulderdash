@@ -63,7 +63,8 @@ bool handleCollision(
   Point newPos,
   int xDiff,
   Map* map,
-  long int* score
+  long int* score,
+  int* gameState
 ){
   Point paddedPlayerPos;
   ObjectArr* virtualMap = map->virtualMap;
@@ -93,6 +94,11 @@ bool handleCollision(
           }
         case WALL:
           return true;
+        case DOOR:
+          if(player->diamondHeld >= map->necessaryDiamonds){
+            *gameState = GAME_END;
+          }
+          return false;
         case DIAMOND:
           player->diamondHeld += 1;
           *score += target->score * player->scoreMultiplier;
@@ -119,7 +125,8 @@ bool handleCollision(
 void controlPlayerMovement(
   Player* player, 
   Map* map,
-  long int* score
+  long int* score,
+  int* gameState
 ){
   if(player->fatigue_timer){
     player->fatigue_timer--;
@@ -143,7 +150,7 @@ void controlPlayerMovement(
 
   if(!comparePoints(newPos, player->currentPos)){
     int xDiff = (newPos.x - player->currentPos.x)/TILE_SIZE;
-    if(handleCollision(player, newPos, xDiff, map, score)) return;
+    if(handleCollision(player, newPos, xDiff, map, score, gameState)) return;
 
     player->currentPos = newPos;
     setPlayerPos(map, newPos);
@@ -155,7 +162,8 @@ void playerUpdate(
   Player* player, 
   ALLEGRO_EVENT* event, 
   Map* map,
-  long int* score
+  long int* score,
+  int* gameState
 ){
   if(!player || !player->alive){
     return;
@@ -167,7 +175,7 @@ void playerUpdate(
         player->alive = false;
         return;
       }
-      controlPlayerMovement(player, map, score);
+      controlPlayerMovement(player, map, score, gameState);
 
       break;
     default:

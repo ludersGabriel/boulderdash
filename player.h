@@ -18,6 +18,7 @@
 #define PLAYER_WIDTH 16
 #define PLAYER_HEIGHT 16
 #define PLAYER_HP 3
+#define GAME_END 3
 
 typedef struct PLAYER{
   int hp;
@@ -43,7 +44,8 @@ void playerUpdate(
   Player* player, 
   ALLEGRO_EVENT* event, 
   Map* map,
-  long int* score
+  long int* score,
+  int* gameState
 );
 
 void playerDraw(Player* player);

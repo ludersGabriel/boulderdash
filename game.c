@@ -1,6 +1,7 @@
 // Made by Gabriel Lüders
 // GRR20190172
 
+#include <stdio.h>
 #include "game.h"
 #include "sprite.h"
 #include "utils.h"
@@ -48,7 +49,27 @@ Game* gameConstructor(){
   game->map = mapConstructor(game->display);
   game->timeAvailabe = game->map->maxTime;
   game->player = playerConstructor(game->map);
-  game->state = playing;  
+  game->state = PLAYING; 
+
+  FILE* rankFile = fopen(RANK_PATH, "r");
+  if(!rankFile){
+    fprintf(stderr, "Failed to ranking from file\n");
+    exit(1);
+  } 
+
+  for(int i = 0; i < RANKING_SIZE; i++)
+    game->ranking[i] = 0;
+  
+
+  char* line;
+  for(int i = 0; i < RANKING_SIZE && fscanf(rankFile, "%m[^\n]", &line) > 0; i++){
+    fgetc(rankFile);
+    
+    game->ranking[i] = atoi(line);
+    free(line);
+  }
+
+  fclose(rankFile);
 
   return game;    
 }
@@ -83,6 +104,7 @@ void resetLevel(Game* game){
   player->currentPos = player->startPos;
   player->alive = true;
   player->diamondHeld = 0;
+  player->scoreMultiplier = 1;
   game->timeAvailabe = game->map->maxTime;
 }
 
@@ -95,14 +117,46 @@ void gameUpdate(Game* game){
     game->player, 
     event, 
     game->map,
-    &game->score
+    &game->score,
+    (int*) &game->state
   );
   resetLevel(game);
   countTime(&game->timeAvailabe, game->frames);
   mapUpdate(game->map, event, game->frames);
 }
 
+void endScreen(Game* game){
+  al_wait_for_event(game->queue, &game->event);
 
+  switch(game->event.type){
+    case ALLEGRO_EVENT_KEY_DOWN:
+      game->state = QUIT;
+
+      FILE* rankFile = fopen(RANK_PATH, "w");
+      if(!rankFile){
+        fprintf(stderr, "Failed to ranking from file\n");
+        exit(1);
+      }
+
+      for(int i = 0; i < RANKING_SIZE; i++)
+        fprintf(rankFile,"%d\n", game->ranking[i]);
+      
+      fclose(rankFile);
+      break;
+    case ALLEGRO_EVENT_DISPLAY_CLOSE:
+      game->state = QUIT;
+      break;
+  }
+
+  if(al_is_event_queue_empty(game->queue)){
+    selectBitmapBuffer(game->display);
+    al_clear_to_color(al_map_rgb(0,0,0));
+
+    drawEndScreen(game->ranking, RANKING_SIZE, game->font);
+
+    flipDisplay(game->display);
+  }
+}
 
 void gameDraw(Game* game){
   if(!game) return;
@@ -119,35 +173,45 @@ void gameDraw(Game* game){
   );
 }
 
+void endInit(Game* game){
+  int smallerIndex = indexOfSmallest(game->ranking, RANKING_SIZE);
+  if(game->score > game->ranking[smallerIndex])
+    game->ranking[smallerIndex] = game->score;
+  
+  sortArray(game->ranking, RANKING_SIZE);
+  game->state = END;
+}
+
 void playGame(Game* game){
   al_wait_for_event(game->queue, &game->event);
 
-		switch(game->event.type){
-			case ALLEGRO_EVENT_TIMER:
-				if(virtualKeyboard[ALLEGRO_KEY_ESCAPE] || virtualKeyboard[ALLEGRO_KEY_Q])
-					game->state = quit;
+  switch(game->event.type){
+    case ALLEGRO_EVENT_TIMER:
+      if(virtualKeyboard[ALLEGRO_KEY_ESCAPE] || virtualKeyboard[ALLEGRO_KEY_Q]){
+        game->state = END_INIT;
+      }
 
-				game->redraw = true;
-				game->frames++;
-				break;
+      game->redraw = true;
+      game->frames++;
+      break;
 
-			case ALLEGRO_EVENT_DISPLAY_CLOSE:
-				game->state = quit;
-				break;
-		}
+    case ALLEGRO_EVENT_DISPLAY_CLOSE:
+      game->state = END_INIT;
+      break;
+  }
 
-		if(game->state == quit) return;
+  if(game->state == END_INIT) return;
 
-		gameUpdate(game);
-		keyboardUpdate(&game->event);
+  gameUpdate(game);
+  keyboardUpdate(&game->event);
 
-		if(game->redraw && al_is_event_queue_empty(game->queue)){
-			selectBitmapBuffer(game->display);
-			al_clear_to_color(al_map_rgb(0,0,0));
+  if(game->redraw && al_is_event_queue_empty(game->queue)){
+    selectBitmapBuffer(game->display);
+    al_clear_to_color(al_map_rgb(0,0,0));
 
-			gameDraw(game);
+    gameDraw(game);
 
-			flipDisplay(game->display);
-			game->redraw = false;	
-		}
+    flipDisplay(game->display);
+    game->redraw = false;	
+  }
 }
