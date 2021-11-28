@@ -11,6 +11,7 @@ Animation* animConstructor(
   int y, 
   int frameCount,
   int currentFrame,
+  int refreshRate,
   ALLEGRO_BITMAP* sheet  
 ){
   Animation* anim = mallocSpace(sizeof(Animation), "Init animation");
@@ -20,6 +21,7 @@ Animation* animConstructor(
   anim->sheet = sheet;
   anim->x = x * TILE_SIZE;
   anim->y = y * TILE_SIZE;
+  anim->refreshRate = refreshRate;
 
   return anim;
 }
@@ -27,8 +29,7 @@ Animation* animConstructor(
 void playAnimation(
   Animation* anim,
   Point* pos,
-  int frames,
-  int refresh
+  int frames
 ){
   if(!anim) return;
 
@@ -43,7 +44,7 @@ void playAnimation(
     0
   );
 
-  if(frames % refresh == 0){
+  if(frames % anim->refreshRate == 0){
     anim->currentFrame += 1;
   }
   if(anim->currentFrame >= anim->frameCount)

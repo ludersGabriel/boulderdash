@@ -26,9 +26,9 @@ Player* playerConstructor(Map* map){
   player->diamondHeld = 0;
   player->scoreMultiplier = 1;
   player->state = PLAYER_IDLE;
-  player->idleAnim = animConstructor(0, 0, 2, 0, player->_sheet);
-  player->rightAnim = animConstructor(0, 3, 3, 0, player->_sheet);
-  player->leftAnim = animConstructor(0, 1, 3, 0, player->_sheet);
+  player->idleAnim = animConstructor(0, 0, 2, 0, 12, player->_sheet);
+  player->rightAnim = animConstructor(0, 3, 3, 0, 20, player->_sheet);
+  player->leftAnim = animConstructor(0, 1, 3, 0, 20, player->_sheet);
   player->lastHorizontal = MOVING_RIGHT;
 
   return player;
@@ -207,22 +207,22 @@ void playerDraw(Player* player, int frames){
 
   switch(player->state){
     case PLAYER_IDLE:
-      playAnimation(player->idleAnim, &player->currentPos, frames, 12);
+      playAnimation(player->idleAnim, &player->currentPos, frames);
       break;
     case MOVING_RIGHT:
-      playAnimation(player->rightAnim, &player->currentPos, frames, 20);
+      playAnimation(player->rightAnim, &player->currentPos, frames);
       break;
     case MOVING_LEFT:
-      playAnimation(player->leftAnim, &player->currentPos, frames, 20);
+      playAnimation(player->leftAnim, &player->currentPos, frames);
       break;
     case MOVING_DOWN:
     case MOVING_UP:
       if(player->lastHorizontal == MOVING_RIGHT){
-        playAnimation(player->rightAnim, &player->currentPos, frames, 20);
+        playAnimation(player->rightAnim, &player->currentPos, frames);
         break;
       }
 
-      playAnimation(player->leftAnim, &player->currentPos, frames, 20);
+      playAnimation(player->leftAnim, &player->currentPos, frames);
       break;
     default:
       break;

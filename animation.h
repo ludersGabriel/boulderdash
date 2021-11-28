@@ -12,6 +12,7 @@ typedef struct ANIMATION_STRUCT{
   int y;
   int frameCount;
   int currentFrame;
+  int refreshRate;
   ALLEGRO_BITMAP* sheet;
 }Animation;
 
@@ -20,14 +21,14 @@ Animation* animConstructor(
   int y, 
   int frameCount,
   int currentFrame,
+  int refreshRate,
   ALLEGRO_BITMAP* sheet  
 );
 
 void playAnimation(
   Animation* anim,
   Point* pos,
-  int frames,
-  int refresh
+  int frames
 );
 
 
