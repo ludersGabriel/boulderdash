@@ -162,7 +162,7 @@ void gameDraw(Game* game){
   if(!game) return;
 
   mapDraw(game->map, game->display);
-  playerDraw(game->player);
+  playerDraw(game->player, game->frames);
   drawHud(
     game->score, 
     game->map->necessaryDiamonds, 

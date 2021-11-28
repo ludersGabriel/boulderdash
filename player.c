@@ -25,6 +25,11 @@ Player* playerConstructor(Map* map){
   player->fatigue = PLAYER_FATIGUE;
   player->diamondHeld = 0;
   player->scoreMultiplier = 1;
+  player->state = PLAYER_IDLE;
+  player->idleAnim = animConstructor(0, 0, 2, 0, player->_sheet);
+  player->rightAnim = animConstructor(0, 3, 3, 0, player->_sheet);
+  player->leftAnim = animConstructor(0, 1, 3, 0, player->_sheet);
+  player->lastHorizontal = MOVING_RIGHT;
 
   return player;
 }
@@ -55,6 +60,9 @@ void playerDestructor(Player* player){
   
   sheetDestructor(player->_sheet);
   spriteDestructor(player->_sprite);
+  free(player->idleAnim);
+  free(player->leftAnim);
+  free(player->rightAnim);
   free(player);
 }
 
@@ -137,24 +145,35 @@ void controlPlayerMovement(
 
   if(virtualKeyboard[ALLEGRO_KEY_D] || virtualKeyboard[ALLEGRO_KEY_RIGHT]){
     newPos.x += player->speed.x;
+    player->state = MOVING_RIGHT;
+    player->lastHorizontal = MOVING_RIGHT;
   }
   else if(virtualKeyboard[ALLEGRO_KEY_A] || virtualKeyboard[ALLEGRO_KEY_LEFT]){
     newPos.x -= player->speed.x;
+    player->state = MOVING_LEFT;
+    player->lastHorizontal = MOVING_LEFT;
   }
   else if(virtualKeyboard[ALLEGRO_KEY_W] || virtualKeyboard[ALLEGRO_KEY_UP]){
     newPos.y -= player->speed.y;
+    player->state = MOVING_UP;
   }
   else if(virtualKeyboard[ALLEGRO_KEY_S] || virtualKeyboard[ALLEGRO_KEY_DOWN]){
     newPos.y += player->speed.y;
+    player->state = MOVING_DOWN;
   }
 
   if(!comparePoints(newPos, player->currentPos)){
     int xDiff = (newPos.x - player->currentPos.x)/TILE_SIZE;
-    if(handleCollision(player, newPos, xDiff, map, score, gameState)) return;
+    if(handleCollision(player, newPos, xDiff, map, score, gameState)){
+      player->state = PLAYER_IDLE;
+      return;
+    } 
 
     player->currentPos = newPos;
     setPlayerPos(map, newPos);
     player->fatigue_timer = player->fatigue;
+  }else{
+    player->state = PLAYER_IDLE;
   }
 }
 
@@ -183,8 +202,29 @@ void playerUpdate(
   }
 }
 
-void playerDraw(Player* player){
+void playerDraw(Player* player, int frames){
   if(!player) return;
 
-  al_draw_bitmap(player->_sprite->bitmap, player->currentPos.x, player->currentPos.y, 0);
+  switch(player->state){
+    case PLAYER_IDLE:
+      playAnimation(player->idleAnim, &player->currentPos, frames, 12);
+      break;
+    case MOVING_RIGHT:
+      playAnimation(player->rightAnim, &player->currentPos, frames, 20);
+      break;
+    case MOVING_LEFT:
+      playAnimation(player->leftAnim, &player->currentPos, frames, 20);
+      break;
+    case MOVING_DOWN:
+    case MOVING_UP:
+      if(player->lastHorizontal == MOVING_RIGHT){
+        playAnimation(player->rightAnim, &player->currentPos, frames, 20);
+        break;
+      }
+
+      playAnimation(player->leftAnim, &player->currentPos, frames, 20);
+      break;
+    default:
+      break;
+  }
 }

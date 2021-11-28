@@ -11,6 +11,7 @@
 #include "object.h"
 #include "collision.h"
 #include "map.h"
+#include "animation.h"
 
 #define PLAYER_FATIGUE 7
 #define PLAYER_SPEED_X 16
@@ -20,12 +21,22 @@
 #define PLAYER_HP 3
 #define GAME_END 3
 
+typedef enum PLAYER_STATER{
+  PLAYER_IDLE,
+  MOVING_RIGHT,
+  MOVING_LEFT,
+  MOVING_DOWN,
+  MOVING_UP
+}PlayerState;
+
 typedef struct PLAYER{
   int hp;
   bool alive;
   Point startPos;
   Point currentPos;
   Point speed;
+  PlayerState state;
+  PlayerState lastHorizontal;
   int width;
   int height;
   int fatigue_timer;
@@ -34,6 +45,9 @@ typedef struct PLAYER{
   float scoreMultiplier;
   ALLEGRO_BITMAP* _sheet;
   Sprite* _sprite;
+  Animation* idleAnim;
+  Animation* leftAnim;
+  Animation* rightAnim;
 }Player;
 
 Player* playerConstructor(Map* map);
@@ -48,7 +62,7 @@ void playerUpdate(
   int* gameState
 );
 
-void playerDraw(Player* player);
+void playerDraw(Player* player, int frames);
 
 Object* collisionPlayerxObj(Player* player, ObjectArr* objArr);
 
