@@ -32,10 +32,14 @@ void allegroInit(Game* game){
 
 }
 
-void countTime(int* time, int frames){
+void countTime(int* time, int frames, Player* player){
   if(frames % 60 != 0) return;
 
   *time -= 1;
+  if(*time) return;
+
+  player->alive = false;
+  player->death_timer = PLAYER_DEATH_TIMER;
 }
 
 Game* gameConstructor(){
@@ -88,6 +92,11 @@ void resetLevel(Game* game){
   Player* player = game->player;
   if(player->alive && game->timeAvailabe != -1) return;
 
+  if(player->death_timer){
+    player->death_timer--;
+    return;
+  }
+
   ObjectArr* virtualMap = game->map->virtualMap;
   for(int i = 0; i < virtualMap->length; i++){
     Object* target = virtualMap->objects[i];
@@ -106,12 +115,17 @@ void resetLevel(Game* game){
   player->diamondHeld = 0;
   player->scoreMultiplier = 1;
   game->timeAvailabe = game->map->maxTime;
+  player->death_timer = 0;
 }
 
 void gameUpdate(Game* game){
   ALLEGRO_EVENT* event = &game->event;
   
   if(!game || !event) return;
+
+  resetLevel(game);
+
+  if(!game->player->alive) return;
 
   playerUpdate(
     game->player, 
@@ -120,8 +134,7 @@ void gameUpdate(Game* game){
     &game->score,
     (int*) &game->state
   );
-  resetLevel(game);
-  countTime(&game->timeAvailabe, game->frames);
+  countTime(&game->timeAvailabe, game->frames, game->player);
   mapUpdate(game->map, event, game->frames);
 }
 

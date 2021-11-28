@@ -21,13 +21,15 @@ Player* playerConstructor(Map* map){
   player->speed.y = PLAYER_SPPED_Y; 
   player->_sheet = loadSheet("./resources/playerSheet.png");
   player->fatigue_timer = 0;
+  player->death_timer = 0;
   player->fatigue = PLAYER_FATIGUE;
   player->diamondHeld = 0;
   player->scoreMultiplier = 1;
   player->state = PLAYER_IDLE;
   player->idleAnim = animConstructor(0, 0, 2, 0, 12, player->_sheet);
-  player->rightAnim = animConstructor(0, 3, 3, 0, 20, player->_sheet);
-  player->leftAnim = animConstructor(0, 1, 3, 0, 20, player->_sheet);
+  player->rightAnim = animConstructor(0, 3, 3, 0, 30, player->_sheet);
+  player->leftAnim = animConstructor(0, 1, 3, 0, 30, player->_sheet);
+  player->deathAnim = animConstructor(4, 0, 2, 0, 20, player->_sheet);
   player->lastHorizontal = MOVING_RIGHT;
 
   return player;
@@ -47,7 +49,7 @@ bool checkDeath(Map* map){
     ){
       continue;
     }
-
+    target->visible = false;
     return true;
   }
 
@@ -190,6 +192,7 @@ void playerUpdate(
     case ALLEGRO_EVENT_TIMER:
       if(checkDeath(map)){
         player->alive = false;
+        player->death_timer = PLAYER_DEATH_TIMER;
         return;
       }
       controlPlayerMovement(player, map, score, gameState);
@@ -202,6 +205,11 @@ void playerUpdate(
 
 void playerDraw(Player* player, int frames){
   if(!player) return;
+
+  if(!player->alive){
+    playAnimation(player->deathAnim, &player->currentPos, frames, true);
+    return;
+  }
 
   switch(player->state){
     case PLAYER_IDLE:

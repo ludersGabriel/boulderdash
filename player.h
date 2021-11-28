@@ -14,6 +14,7 @@
 #include "animation.h"
 
 #define PLAYER_FATIGUE 7
+#define PLAYER_DEATH_TIMER 120
 #define PLAYER_SPEED_X 16
 #define PLAYER_SPPED_Y 16
 #define PLAYER_WIDTH 16
@@ -37,6 +38,7 @@ typedef struct PLAYER{
   Point speed;
   PlayerState state;
   PlayerState lastHorizontal;
+  int death_timer;
   int width;
   int height;
   int fatigue_timer;
@@ -47,6 +49,7 @@ typedef struct PLAYER{
   Animation* idleAnim;
   Animation* leftAnim;
   Animation* rightAnim;
+  Animation* deathAnim;
 }Player;
 
 Player* playerConstructor(Map* map);
