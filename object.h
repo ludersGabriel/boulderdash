@@ -86,7 +86,7 @@ Object* sandInit(ALLEGRO_BITMAP* mapSheet, int x, int y);
 
 Object* playerInit(ALLEGRO_BITMAP* mapSheet, int x, int y);
 
-Object* diamondInit(ALLEGRO_BITMAP* mapSheet, int x, int y);
+Object* diamondInit(ALLEGRO_BITMAP* mapSheet, int diamondValue, int x, int y);
 
 Object* doorInit(ALLEGRO_BITMAP* mapSheet, int x, int y);
 

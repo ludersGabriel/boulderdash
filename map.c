@@ -55,7 +55,7 @@ ObjectArr* initVirtualMap(Map* map){
           virtualMap->objects[i*virtualMap->cols + j] = playerInit(map->_sheet, j, i);
           break;
         case DIAMOND:
-          virtualMap->objects[i*virtualMap->cols + j] = diamondInit(map->_sheet, j, i);
+          virtualMap->objects[i*virtualMap->cols + j] = diamondInit(map->_sheet, map->diamondValue, j, i);
           break;
         case DOOR:
           virtualMap->objects[i*virtualMap->cols + j] = doorInit(map->_sheet, j, i);

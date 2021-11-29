@@ -212,13 +212,13 @@ Object* playerInit(ALLEGRO_BITMAP* mapSheet, int x, int y){
   );
 }
 
-Object* diamondInit(ALLEGRO_BITMAP* mapSheet, int x, int y){
+Object* diamondInit(ALLEGRO_BITMAP* mapSheet, int diamondValue, int x, int y){
   return objectConstructor(
     x,
     y,
     spriteConstructor(mapSheet, 4*TILE_SIZE, 9*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loading diamond"),
     animConstructor(4, 8, 4, 0, 8, mapSheet),
-    0,
+    diamondValue,
     TILE_SIZE,
     TILE_SIZE,
     1,
