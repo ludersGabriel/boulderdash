@@ -47,8 +47,10 @@ void drawHowToPlay(ALLEGRO_FONT* font, bool help){
   al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*10, TILE_SIZE*8, 0, "- Press Q to go to the end screen or Esc to quit");
   al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*10, TILE_SIZE*9, 0, "- Get to the portal with the necessary coins");
 
-  if(help)
+  if(help){
     al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*9, TILE_SIZE*12, 0, "Press space to resume gameplay..");
+    al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*1, TILE_SIZE*20, 0, "Gabriel Lüders | GRR20190172");
+  }
 }
 
 void drawStartScreen(ALLEGRO_FONT* font){
@@ -57,4 +59,5 @@ void drawStartScreen(ALLEGRO_FONT* font){
   drawHowToPlay(font, false);
 
   al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*9, TILE_SIZE*12, 0, "Press space to start..");
+  al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*1, TILE_SIZE*20, 0, "Gabriel Lüders | GRR20190172");
 }
