@@ -22,6 +22,8 @@
 #define PLAYER_HP 3
 #define GAME_END 3
 
+#include "audio.h"
+
 typedef enum PLAYER_STATER{
   PLAYER_IDLE,
   MOVING_RIGHT,
@@ -61,7 +63,8 @@ void playerUpdate(
   ALLEGRO_EVENT* event, 
   Map* map,
   long int* score,
-  int* gameState
+  int* gameState,
+  AudioManager* audioManager
 );
 
 void playerDraw(Player* player, int frames);

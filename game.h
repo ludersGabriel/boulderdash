@@ -11,6 +11,7 @@
 #include "display.h"
 #include "input.h"
 #include "hud.h"
+#include "audio.h"
 
 #define RANK_PATH "./resources/score.txt"
 #define RANKING_SIZE 10
@@ -33,6 +34,7 @@ typedef struct GAME{
   Map* map;
   Player* player;
   Display* display;
+  AudioManager* audioManager;
   ALLEGRO_TIMER* timer;
   ALLEGRO_FONT* font;
   ALLEGRO_EVENT_QUEUE* queue;

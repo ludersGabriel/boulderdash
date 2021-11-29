@@ -2,6 +2,8 @@
 // GRR20190172
 
 #include <stdio.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 #include "game.h"
 #include "sprite.h"
 #include "utils.h"
@@ -14,6 +16,8 @@ void allegroInit(Game* game){
 	displayInit();
 	keyboardInit();
 	spriteSystemInit();
+  al_install_audio();
+  al_init_acodec_addon();  
 
   game->timer = al_create_timer(1.0 / 60);
 	checkAllegroComponent(game->timer, "timer");
@@ -54,6 +58,8 @@ Game* gameConstructor(){
   game->timeAvailabe = game->map->maxTime;
   game->player = playerConstructor(game->map);
   game->state = PLAYING; 
+  game->audioManager = audioManagerConstructor();
+  playMusic(game->audioManager, MUSIC);
 
   FILE* rankFile = fopen(RANK_PATH, "r");
   if(!rankFile){
@@ -84,6 +90,10 @@ void gameDestructor(Game* game){
   mapDestructor(game->map);
   playerDestructor(game->player);
   displayDestructor(game->display);
+  audioManagerDestructor(game->audioManager);
+  al_destroy_event_queue(game->queue);
+  al_destroy_timer(game->timer);
+  al_destroy_font(game->font);
 
   free(game);
 }
@@ -132,7 +142,8 @@ void gameUpdate(Game* game){
     event, 
     game->map,
     &game->score,
-    (int*) &game->state
+    (int*) &game->state,
+    game->audioManager
   );
   countTime(&game->timeAvailabe, game->frames, game->player);
   mapUpdate(game->map, event, game->frames);
@@ -192,6 +203,7 @@ void endInit(Game* game){
     game->ranking[smallerIndex] = game->score;
   
   sortArray(game->ranking, RANKING_SIZE);
+  al_stop_sample_instance(game->audioManager->sounds[MUSIC].instance);
   game->state = END;
 }
 

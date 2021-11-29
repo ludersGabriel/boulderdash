@@ -72,7 +72,8 @@ bool handleCollision(
   int xDiff,
   Map* map,
   long int* score,
-  int* gameState
+  int* gameState,
+  AudioManager* audioManager
 ){
   Point paddedPlayerPos;
   ObjectArr* virtualMap = map->virtualMap;
@@ -103,20 +104,24 @@ bool handleCollision(
         case WALL:
           return true;
         case DOOR:
+          playEffect(audioManager, FIREWORK);
           if(player->diamondHeld >= map->necessaryDiamonds){
             *gameState = GAME_END;
           }
           return false;
         case DIAMOND:
+          playEffect(audioManager, DIAMOND_SOUND);
           player->diamondHeld += 1;
           *score += target->score * player->scoreMultiplier;
           if(
             player->diamondHeld >= map->necessaryDiamonds
             && player->scoreMultiplier < 1.5
           ){
+            playEffect(audioManager, DIAMOND_LEVELUP);
             player->scoreMultiplier = 1.5;
           }
         case SAND:
+          playEffect(audioManager, SAND_SOUND);
           target->visible = false;
           break;
         case EMPTY:
@@ -134,7 +139,8 @@ void controlPlayerMovement(
   Player* player, 
   Map* map,
   long int* score,
-  int* gameState
+  int* gameState,
+  AudioManager* audioManager
 ){
   if(player->fatigue_timer){
     player->fatigue_timer--;
@@ -164,7 +170,7 @@ void controlPlayerMovement(
 
   if(!comparePoints(newPos, player->currentPos)){
     int xDiff = (newPos.x - player->currentPos.x)/TILE_SIZE;
-    if(handleCollision(player, newPos, xDiff, map, score, gameState)){
+    if(handleCollision(player, newPos, xDiff, map, score, gameState, audioManager)){
       player->state = PLAYER_IDLE;
       return;
     } 
@@ -182,7 +188,8 @@ void playerUpdate(
   ALLEGRO_EVENT* event, 
   Map* map,
   long int* score,
-  int* gameState
+  int* gameState,
+  AudioManager* audioManager
 ){
   if(!player || !player->alive){
     return;
@@ -193,9 +200,10 @@ void playerUpdate(
       if(checkDeath(map)){
         player->alive = false;
         player->death_timer = PLAYER_DEATH_TIMER;
+        playEffect(audioManager, DEATH_SOUND);
         return;
       }
-      controlPlayerMovement(player, map, score, gameState);
+      controlPlayerMovement(player, map, score, gameState, audioManager);
 
       break;
     default:
