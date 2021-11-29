@@ -18,7 +18,7 @@ AudioManager* audioManagerConstructor(){
   }
 
   sounds[DEATH_SOUND].soundEffect 
-    = al_load_sample("./resources/soundEffects/hit3.ogg");
+    = al_load_sample("./resources/soundEffects/pain.ogg");
   
   sounds[SAND_SOUND].soundEffect 
     = al_load_sample("./resources/soundEffects/sand4.ogg");
