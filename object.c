@@ -135,3 +135,118 @@ void sortObjArr(ObjectArr* objArr){
     target[i] = temp;
   }
 }
+
+Object* rockInit(ALLEGRO_BITMAP* mapSheet, int x, int y){
+  return objectConstructor(
+    x,
+    y,
+    spriteConstructor(mapSheet, 3*TILE_SIZE, TILE_SIZE*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loadin rock"),
+    NULL,
+    0,
+    TILE_SIZE,
+    TILE_SIZE,
+    1,
+    ROCK,
+    true,
+    true,
+    true,
+    false,
+    "init rock"
+  );
+}
+
+Object* wallInit(ALLEGRO_BITMAP* mapSheet, int x, int y){
+  return objectConstructor(
+    x,
+    y,
+    spriteConstructor(mapSheet, 0*TILE_SIZE, 8*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loding wall"),
+    NULL,
+    0,
+    TILE_SIZE,
+    TILE_SIZE,
+    0,
+    WALL,
+    true,
+    true,
+    false,
+    false,
+    "init wall"
+  );
+}
+
+Object* sandInit(ALLEGRO_BITMAP* mapSheet, int x, int y){
+  return objectConstructor(
+    x,
+    y,
+    spriteConstructor(mapSheet, 1*TILE_SIZE, 8*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loding sand"),
+    NULL,
+    0,
+    TILE_SIZE,
+    TILE_SIZE,
+    0,
+    SAND,
+    true,
+    false,
+    false,
+    false,
+    "init sand"
+  );
+}
+
+Object* playerInit(ALLEGRO_BITMAP* mapSheet, int x, int y){
+  return objectConstructor(
+    x,
+    y,
+    NULL,
+    NULL,
+    0,
+    TILE_SIZE,
+    TILE_SIZE,
+    0,
+    PLAYER,
+    true,
+    false,
+    false,
+    false,
+    "init player map object"
+  );
+}
+
+Object* diamondInit(ALLEGRO_BITMAP* mapSheet, int x, int y){
+  return objectConstructor(
+    x,
+    y,
+    spriteConstructor(mapSheet, 4*TILE_SIZE, 9*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loading diamond"),
+    animConstructor(4, 8, 4, 0, 8, mapSheet),
+    0,
+    TILE_SIZE,
+    TILE_SIZE,
+    1,
+    DIAMOND,
+    true,
+    false,
+    false,
+    false,
+    "init diamond"
+  );
+}
+
+Object* doorInit(ALLEGRO_BITMAP* mapSheet, int x, int y){
+  return objectConstructor(
+    x,
+    y,
+    spriteConstructor(mapSheet, 7*TILE_SIZE, 8*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loading door"),
+    animConstructor(7, 8, 4, 0, 10, mapSheet),
+    0,
+    TILE_SIZE,
+    TILE_SIZE,
+    0,
+    DOOR,
+    true,
+    false,
+    false,
+    false,
+    "init door"
+  );
+}
+

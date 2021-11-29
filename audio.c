@@ -31,6 +31,9 @@ AudioManager* audioManagerConstructor(){
 
   sounds[FIREWORK].soundEffect 
     = al_load_sample("./resources/soundEffects/launch1.ogg");
+  
+  sounds[ROCK_TUMP].soundEffect 
+    = al_load_sample("./resources/soundEffects/hit3.ogg");
 
   sounds[MUSIC].soundEffect 
     = al_load_sample("./resources/music/piano1.ogg");

@@ -17,11 +17,12 @@
 #define RANKING_SIZE 10
 
 typedef enum GAME_STATE{
-  BEGINNING,
+  START,
   PLAYING,
   QUIT,
   END_INIT,
-  END
+  END,
+  HELP
 }GameState;
 
 typedef struct GAME{
@@ -54,6 +55,10 @@ void gameUpdate(Game* game);
 void gameDraw(Game* game);
 
 void endScreen(Game* game);
+
+void startScreen(Game* game);
+
+void helpScreen(Game* game);
 
 void endInit(Game* game);
 

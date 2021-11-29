@@ -57,7 +57,7 @@ Game* gameConstructor(){
   game->map = mapConstructor(game->display);
   game->timeAvailabe = game->map->maxTime;
   game->player = playerConstructor(game->map);
-  game->state = PLAYING; 
+  game->state = START; 
   game->audioManager = audioManagerConstructor();
   playMusic(game->audioManager, MUSIC);
 
@@ -146,7 +146,7 @@ void gameUpdate(Game* game){
     game->audioManager
   );
   countTime(&game->timeAvailabe, game->frames, game->player);
-  mapUpdate(game->map, event, game->frames);
+  mapUpdate(game->map, event, game->frames, game->audioManager);
 }
 
 void endScreen(Game* game){
@@ -182,6 +182,60 @@ void endScreen(Game* game){
   }
 }
 
+void startScreen(Game* game){
+  al_wait_for_event(game->queue, &game->event);
+
+  switch(game->event.type){    
+    case ALLEGRO_EVENT_KEY_DOWN:
+      if(game->event.keyboard.keycode == ALLEGRO_KEY_SPACE)
+        game->state = PLAYING;
+      if(game->event.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+        game->state = QUIT;
+      if(game->event.keyboard.keycode == ALLEGRO_KEY_Q)
+        game->state = END_INIT;
+      break;
+    case ALLEGRO_EVENT_DISPLAY_CLOSE:
+      game->state = QUIT;
+      break;
+  }
+
+  if(al_is_event_queue_empty(game->queue)){
+    selectBitmapBuffer(game->display);
+    al_clear_to_color(al_map_rgb(0,0,0));
+
+    drawStartScreen(game->font);
+
+    flipDisplay(game->display);
+  }
+}
+
+void helpScreen(Game* game){
+  al_wait_for_event(game->queue, &game->event);
+
+  switch(game->event.type){    
+    case ALLEGRO_EVENT_KEY_DOWN:
+      if(game->event.keyboard.keycode == ALLEGRO_KEY_SPACE)
+        game->state = PLAYING;
+      if(game->event.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+        game->state = QUIT;
+      if(game->event.keyboard.keycode == ALLEGRO_KEY_Q)
+        game->state = END_INIT;
+      break;
+    case ALLEGRO_EVENT_DISPLAY_CLOSE:
+      game->state = QUIT;
+      break;
+  }
+
+  if(al_is_event_queue_empty(game->queue)){
+    selectBitmapBuffer(game->display);
+    al_clear_to_color(al_map_rgb(0,0,0));
+
+    drawHowToPlay(game->font, true);
+
+    flipDisplay(game->display);
+  }
+}
+
 void gameDraw(Game* game){
   if(!game) return;
 
@@ -203,7 +257,6 @@ void endInit(Game* game){
     game->ranking[smallerIndex] = game->score;
   
   sortArray(game->ranking, RANKING_SIZE);
-  al_stop_sample_instance(game->audioManager->sounds[MUSIC].instance);
   game->state = END;
 }
 
@@ -212,20 +265,26 @@ void playGame(Game* game){
 
   switch(game->event.type){
     case ALLEGRO_EVENT_TIMER:
-      if(virtualKeyboard[ALLEGRO_KEY_ESCAPE] || virtualKeyboard[ALLEGRO_KEY_Q]){
+      if(virtualKeyboard[ALLEGRO_KEY_ESCAPE])
+        game->state = QUIT;
+
+      if(virtualKeyboard[ALLEGRO_KEY_Q])
         game->state = END_INIT;
-      }
 
       game->redraw = true;
       game->frames++;
       break;
-
     case ALLEGRO_EVENT_DISPLAY_CLOSE:
-      game->state = END_INIT;
+      game->state = QUIT;
+      break;
+    case ALLEGRO_EVENT_KEY_DOWN:
+      if(game->event.keyboard.keycode == ALLEGRO_KEY_H || game->event.keyboard.keycode == ALLEGRO_KEY_F1)
+        game->state = HELP;
       break;
   }
 
-  if(game->state == END_INIT) return;
+  if(game->state == END_INIT || game->state == QUIT || game->state == HELP) 
+    return;
 
   gameUpdate(game);
   keyboardUpdate(&game->event);

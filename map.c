@@ -43,114 +43,22 @@ ObjectArr* initVirtualMap(Map* map){
     for(int j = 0; j < virtualMap->cols && sscanf(temp, "%d %n", &value, &lineSize) > 0; j++){
       switch (value){
         case ROCK:
-          virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
-            j,
-            i,
-            spriteConstructor(map->_sheet, 3*TILE_SIZE, TILE_SIZE*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loadin rock"),
-            NULL,
-            0,
-            TILE_SIZE,
-            TILE_SIZE,
-            1,
-            ROCK,
-            true,
-            true,
-            true,
-            false,
-            "init rock"
-          );
-          
+          virtualMap->objects[i*virtualMap->cols + j] = rockInit(map->_sheet, j, i);
           break;
         case WALL:
-          virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
-            j,
-            i,
-            spriteConstructor(map->_sheet, 0*TILE_SIZE, 8*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loding wall"),
-            NULL,
-            0,
-            TILE_SIZE,
-            TILE_SIZE,
-            0,
-            WALL,
-            true,
-            true,
-            false,
-            false,
-            "init wall"
-          );
+          virtualMap->objects[i*virtualMap->cols + j] = wallInit(map->_sheet, j, i);
           break;
-
         case SAND:
-          virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
-            j,
-            i,
-            spriteConstructor(map->_sheet, 1*TILE_SIZE, 8*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loading sand"),
-            NULL,
-            0,
-            TILE_SIZE,
-            TILE_SIZE,
-            0,
-            SAND,
-            true,
-            false,
-            false,
-            false,
-            "init sand"
-          );
+          virtualMap->objects[i*virtualMap->cols + j] = sandInit(map->_sheet, j, i);
           break;
         case PLAYER:
-          virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
-            j,
-            i,
-            NULL,
-            NULL,
-            0,
-            TILE_SIZE,
-            TILE_SIZE,
-            0,
-            PLAYER,
-            true,
-            false,
-            false,
-            false,
-            "init player"
-          );
+          virtualMap->objects[i*virtualMap->cols + j] = playerInit(map->_sheet, j, i);
           break;
         case DIAMOND:
-          virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
-            j,
-            i,
-            spriteConstructor(map->_sheet, 4*TILE_SIZE, 9*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loading diamond"),
-            animConstructor(4, 8, 4, 0, 8, map->_sheet),
-            map->diamondValue,
-            TILE_SIZE,
-            TILE_SIZE,
-            1,
-            DIAMOND,
-            true,
-            false,
-            false,
-            false,
-            "init diamond"
-          );
+          virtualMap->objects[i*virtualMap->cols + j] = diamondInit(map->_sheet, j, i);
           break;
         case DOOR:
-          virtualMap->objects[i*virtualMap->cols + j] = objectConstructor(
-            j,
-            i,
-            spriteConstructor(map->_sheet, 7*TILE_SIZE, 8*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loading door"),
-            animConstructor(7, 8, 4, 0, 10, map->_sheet),
-            0,
-            TILE_SIZE,
-            TILE_SIZE,
-            0,
-            DOOR,
-            true,
-            false,
-            false,
-            false,
-            "init door"
-          );
+          virtualMap->objects[i*virtualMap->cols + j] = doorInit(map->_sheet, j, i);
           break;
         case EMPTY:
         default:
@@ -243,12 +151,16 @@ Object* objectInPos(ObjectArr* virtualMap, int x, int y){
   return NULL;
 }
 
-void objectFall(Object* target, Map* map){
+void objectFall(Object* target, Map* map, AudioManager* audioManager){
   ObjectArr* virtualMap = map->virtualMap;
 
   Object* objUnder =objectInPos(virtualMap, target->pos.x, target->pos.y + 1);
-  if(objUnder && !(target->state == FALLING && objUnder->type == PLAYER)) {
-
+  if(
+    objUnder 
+    && !(target->state == FALLING && objUnder->type == PLAYER)
+  ) {
+    if(!target->state == IDLE)
+      playEffect(audioManager, ROCK_TUMP);
     target->state = IDLE;
     return;
   }
@@ -269,7 +181,7 @@ bool canRoll(Object* target, ObjectArr* virtualMap){
   return true;
 }
 
-bool objectRoll(Object* target, Map* map){
+bool objectRoll(Object* target, Map* map, AudioManager* audioManager){
   ObjectArr* virtualMap = map->virtualMap;
 
   if(!canRoll(target, virtualMap)) return false;
@@ -284,6 +196,8 @@ bool objectRoll(Object* target, Map* map){
     || (!objLeft && target->state == FALLING && objDownLeft->type == PLAYER)
   ){
     target->pos.x -= target->speed;
+    if(target->state != IDLE)
+      playEffect(audioManager, ROCK_TUMP);
     target->state = FALLING;
     return true;
   } 
@@ -292,6 +206,8 @@ bool objectRoll(Object* target, Map* map){
     || (!objRight && target->state == FALLING && objDownRight->type == PLAYER)
   ){
     target->pos.x += target->speed;
+    if(target->state != IDLE)
+      playEffect(audioManager, ROCK_TUMP);
     target->state = FALLING;
     return true;
   } 
@@ -300,15 +216,15 @@ bool objectRoll(Object* target, Map* map){
   return false;
 }
 
-void updateRock(Object* rock, long int frames, Map* map){
+void updateRock(Object* rock, long int frames, Map* map, AudioManager* audioManager){
   if(frames % 8 != 0) return;
-  bool rolled = objectRoll(rock, map);
+  bool rolled = objectRoll(rock, map, audioManager);
   if(rolled) return;
 
-  objectFall(rock, map);
+  objectFall(rock, map, audioManager);
 }
 
-void updateMapObjects(Map* map, long int frames){
+void updateMapObjects(Map* map, long int frames, AudioManager* audioManager){
   ObjectArr* virtualMap = map->virtualMap;
   sortObjArr(virtualMap);
   for(int i = 0; i < virtualMap->lines; i++){
@@ -319,7 +235,7 @@ void updateMapObjects(Map* map, long int frames){
       switch (target->type){
         case DIAMOND:
         case ROCK:
-          updateRock(target, frames, map);
+          updateRock(target, frames, map, audioManager);
           break;
         case EMPTY:
         default:
@@ -329,12 +245,12 @@ void updateMapObjects(Map* map, long int frames){
   }
 }
 
-void mapUpdate(Map* map, ALLEGRO_EVENT* event, long int frames){
+void mapUpdate(Map* map, ALLEGRO_EVENT* event, long int frames, AudioManager* audioManager){
   if(!map) return;
 
   switch(event->type){
     case ALLEGRO_EVENT_TIMER:
-      updateMapObjects(map, frames);
+      updateMapObjects(map, frames, audioManager);
       break;
     default:
       break;

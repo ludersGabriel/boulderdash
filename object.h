@@ -78,4 +78,18 @@ void sortObjArr(ObjectArr* objArr);
 
 void handleCollisionObjects(Object* obj, Point oldPos, ObjectArr* objArr);
 
+Object* rockInit(ALLEGRO_BITMAP* mapSheet, int x, int y);
+
+Object* wallInit(ALLEGRO_BITMAP* mapSheet, int x, int y);
+
+Object* sandInit(ALLEGRO_BITMAP* mapSheet, int x, int y);
+
+Object* playerInit(ALLEGRO_BITMAP* mapSheet, int x, int y);
+
+Object* diamondInit(ALLEGRO_BITMAP* mapSheet, int x, int y);
+
+Object* doorInit(ALLEGRO_BITMAP* mapSheet, int x, int y);
+
+
+
 #endif

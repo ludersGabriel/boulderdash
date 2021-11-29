@@ -39,3 +39,22 @@ void drawEndScreen(int* ranking, int length, ALLEGRO_FONT* font){
   al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*15, TILE_SIZE*(7 + i), 0, "The End!");
 
 }
+
+void drawHowToPlay(ALLEGRO_FONT* font, bool help){
+  al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*9, TILE_SIZE*5, 0, "How to play");
+  al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*10, TILE_SIZE*6, 0, "- WASD or Arrow Keys to move");
+  al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*10, TILE_SIZE*7, 0, "- Whilst in game, press H or F1 to show the help text");
+  al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*10, TILE_SIZE*8, 0, "- Press Q to go to the end screen or Esc to quit");
+  al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*10, TILE_SIZE*9, 0, "- Get to the portal with the necessary coins");
+
+  if(help)
+    al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*9, TILE_SIZE*12, 0, "Press space to resume gameplay..");
+}
+
+void drawStartScreen(ALLEGRO_FONT* font){
+  al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*9, TILE_SIZE*3, 0, "Boulder Dash");
+
+  drawHowToPlay(font, false);
+
+  al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*9, TILE_SIZE*12, 0, "Press space to start..");
+}

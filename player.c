@@ -200,6 +200,7 @@ void playerUpdate(
       if(checkDeath(map)){
         player->alive = false;
         player->death_timer = PLAYER_DEATH_TIMER;
+        playEffect(audioManager, ROCK_TUMP);
         playEffect(audioManager, DEATH_SOUND);
         return;
       }

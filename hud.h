@@ -19,4 +19,8 @@ void drawHud(
 
 void drawEndScreen(int* ranking, int length, ALLEGRO_FONT* font);
 
+void drawHowToPlay(ALLEGRO_FONT* font, bool help);
+
+void drawStartScreen(ALLEGRO_FONT* font);
+
 #endif

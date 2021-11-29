@@ -21,8 +21,14 @@ int main(void){
 
 	for(al_start_timer(game->timer); game->state != QUIT;){
 		switch(game->state){
+			case START:
+				startScreen(game);
+				break;
 			case PLAYING: 
 				playGame(game);
+				break;
+			case HELP:
+				helpScreen(game);
 				break;
 			case END_INIT:
 				endInit(game);

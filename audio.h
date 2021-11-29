@@ -16,6 +16,7 @@ typedef enum{
   MUSIC,
   DIAMOND_LEVELUP,
   FIREWORK,
+  ROCK_TUMP,
   SOUND_AMOUNT
 }Sounds;
 

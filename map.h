@@ -10,6 +10,7 @@
 #include "sprite.h"
 #include "display.h"
 #include "object.h"
+#include "audio.h"
 
 typedef struct MAP{
   ALLEGRO_BITMAP* _sheet;
@@ -26,7 +27,7 @@ Map* mapConstructor(Display* display);
 
 void mapDestructor(Map* map);
 
-void mapUpdate(Map* map, ALLEGRO_EVENT* event, long int frames);
+void mapUpdate(Map* map, ALLEGRO_EVENT* event, long int frames, AudioManager* audioManager);
 
 void setPlayerPos(Map* map, Point playerPos);
 
