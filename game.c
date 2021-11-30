@@ -275,12 +275,44 @@ void gameDraw(Game* game){
 }
 
 void endInit(Game* game){
-  int smallerIndex = indexOfSmallest(game->ranking, RANKING_SIZE);
-  if(game->score > game->ranking[smallerIndex])
-    game->ranking[smallerIndex] = game->score;
+  al_wait_for_event(game->queue, &game->event);
+
+  if(game->player->escaped){
+    switch(game->event.type){
+      case ALLEGRO_EVENT_TIMER:
+        if(game->frames % 3 == 0){
+          game->score += 1;
+          game->timeAvailabe -= 1;
+          playEffect(game->audioManager, DIAMOND_SOUND);
+        }
+
+        game->redraw = true;
+        game->frames++;
+        break;
+      case ALLEGRO_EVENT_DISPLAY_CLOSE:
+        game->state = QUIT;
+        break;
+    }
+
+    if(game->redraw && al_is_event_queue_empty(game->queue)){
+      selectBitmapBuffer(game->display);
+      al_clear_to_color(al_map_rgb(0,0,0));
+
+      gameDraw(game);
+
+      flipDisplay(game->display);
+      game->redraw = false;	
+    }
+  }
   
-  sortArray(game->ranking, RANKING_SIZE);
-  game->state = END;
+  if(game->timeAvailabe == 0 || !game->player->escaped){
+    int smallerIndex = indexOfSmallest(game->ranking, RANKING_SIZE);
+    if(game->score > game->ranking[smallerIndex])
+      game->ranking[smallerIndex] = game->score;
+    
+    sortArray(game->ranking, RANKING_SIZE);
+    game->state = END;
+  }
 }
 
 void playGame(Game* game){

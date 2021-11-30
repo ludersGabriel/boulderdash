@@ -13,6 +13,7 @@ Player* playerConstructor(Map* map){
 
   player->alive = true;
   player->hp = PLAYER_HP;
+  player->escaped = false;
   player->startPos = getPlayerPos(map);
   player->currentPos = player->startPos;
   player->width = PLAYER_WIDTH;
@@ -107,6 +108,7 @@ bool handleCollision(
           playEffect(audioManager, FIREWORK);
           if(player->diamondHeld >= map->necessaryDiamonds){
             *gameState = GAME_END;
+            player->escaped = true;
           }
           return false;
         case DIAMOND:

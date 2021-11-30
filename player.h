@@ -47,6 +47,7 @@ typedef struct PLAYER{
   int fatigue;
   int diamondHeld;
   float scoreMultiplier;
+  bool escaped;
   ALLEGRO_BITMAP* _sheet;
   Animation* idleAnim;
   Animation* leftAnim;
