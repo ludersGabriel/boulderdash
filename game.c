@@ -309,16 +309,20 @@ void endInit(Game* game){
       flipDisplay(game->display);
       game->redraw = false;	
     }
+
+    if(game->timeAvailabe == 0){
+      int smallerIndex = indexOfSmallest(game->ranking, RANKING_SIZE);
+      if(game->score > game->ranking[smallerIndex])
+        game->ranking[smallerIndex] = game->score;
+      
+      sortArray(game->ranking, RANKING_SIZE);
+      game->state = END;
+    }
   }
-  
-  if(game->timeAvailabe == 0 || !game->player->escaped){
-    int smallerIndex = indexOfSmallest(game->ranking, RANKING_SIZE);
-    if(game->score > game->ranking[smallerIndex])
-      game->ranking[smallerIndex] = game->score;
-    
-    sortArray(game->ranking, RANKING_SIZE);
+  else
     game->state = END;
-  }
+  
+  
 }
 
 // responsible for the main game loop
