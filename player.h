@@ -9,7 +9,6 @@
 #include "display.h"
 #include "utils.h"
 #include "object.h"
-#include "collision.h"
 #include "map.h"
 #include "animation.h"
 
@@ -24,6 +23,7 @@
 
 #include "audio.h"
 
+// enum that defines all the possible player states
 typedef enum PLAYER_STATER{
   PLAYER_IDLE,
   MOVING_RIGHT,
@@ -32,6 +32,7 @@ typedef enum PLAYER_STATER{
   MOVING_UP
 }PlayerState;
 
+// struct that defines the player object
 typedef struct PLAYER{
   int hp;
   bool alive;
@@ -55,10 +56,13 @@ typedef struct PLAYER{
   Animation* deathAnim;
 }Player;
 
+// creates and initializes a player object, returning it
 Player* playerConstructor(Map* map);
 
+// destroys a given player object
 void playerDestructor(Player* player);
 
+// updates a given player object
 void playerUpdate(
   Player* player, 
   ALLEGRO_EVENT* event, 
@@ -68,8 +72,7 @@ void playerUpdate(
   AudioManager* audioManager
 );
 
+// draws the player animations
 void playerDraw(Player* player, int frames);
-
-Object* collisionPlayerxObj(Player* player, ObjectArr* objArr);
 
 #endif

@@ -4,11 +4,13 @@
 #include "display.h"
 #include "utils.h"
 
+// responsible for initializing the allegro display system
 void displayInit(){
   al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
   al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_SUGGEST);
 }
 
+// creates and initializes a display object, returning it
 Display* displayConstructor(){
   Display* display = mallocSpace(sizeof(Display), "display pointer null");
   
@@ -26,6 +28,7 @@ Display* displayConstructor(){
   return display;
 }
 
+// destroys a given display object
 void displayDestructor(Display* display){
   if(!display) return;
 
@@ -35,10 +38,12 @@ void displayDestructor(Display* display){
   free(display);
 }
 
+// selects the actual game grid
 void selectBitmapBuffer(Display* display){
   al_set_target_bitmap(display->bitmapBuffer);
 }
 
+// flips the drawings to the display
 void flipDisplay(Display* display){
   al_set_target_backbuffer(display->mainDisplay);
   al_draw_scaled_bitmap(

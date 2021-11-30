@@ -3,6 +3,7 @@
 
 #include "audio.h"
 
+// creates and initializes a audio manager
 AudioManager* audioManagerConstructor(){
   al_reserve_samples(SOUND_AMOUNT);
 
@@ -46,17 +47,21 @@ AudioManager* audioManagerConstructor(){
   return manager;
 }
 
+// plays a sound effect at the given index
 void playEffect(AudioManager* audioManager, Sounds soundIndex){
   SoundEffect* sounds = audioManager->sounds;
   
   al_play_sample(sounds[soundIndex].soundEffect, 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
 }
 
+// plays a music at the given index
 void playMusic(AudioManager* audioManager, Sounds soundIndex){
   SoundEffect* sounds = audioManager->sounds;
   al_play_sample_instance(sounds[soundIndex].instance);
 
 }
+
+// destroys a given audio manager
 void audioManagerDestructor(AudioManager* manager){
   SoundEffect* sounds = manager->sounds;
   for(int i = 0; i < manager->length; i++){

@@ -3,6 +3,7 @@
 
 #include "hud.h"
 
+// draws the hud at the top of the screen
 void drawHud(
   int score,
   int necessaryDiamonds,
@@ -18,6 +19,7 @@ void drawHud(
   al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*30, 5, 0, "%06d", score);
 }
 
+// draws the end screen
 void drawEndScreen(int* ranking, int length, ALLEGRO_FONT* font){
   al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*15, TILE_SIZE*3, 0, "RANKING");
 
@@ -40,6 +42,7 @@ void drawEndScreen(int* ranking, int length, ALLEGRO_FONT* font){
 
 }
 
+// draws the help screen
 void drawHowToPlay(ALLEGRO_FONT* font, bool help){
   al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*9, TILE_SIZE*5, 0, "How to play");
   al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*10, TILE_SIZE*6, 0, "- WASD or Arrow Keys to move");
@@ -53,6 +56,7 @@ void drawHowToPlay(ALLEGRO_FONT* font, bool help){
   }
 }
 
+// draws start screen
 void drawStartScreen(ALLEGRO_FONT* font){
   al_draw_textf(font, al_map_rgb(255, 255, 255), TILE_SIZE*9, TILE_SIZE*3, 0, "Boulder Dash");
 

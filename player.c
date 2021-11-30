@@ -8,6 +8,7 @@
 #include "sprite.h"
 #include "input.h"
 
+// creates and initializes a player object, returning it
 Player* playerConstructor(Map* map){
   Player* player = mallocSpace(sizeof(Player), "player pointer null");
 
@@ -36,6 +37,7 @@ Player* playerConstructor(Map* map){
   return player;
 }
 
+// helper function that checks if the player has to die
 bool checkDeath(Map* map){
   ObjectArr* virtualMap = map->virtualMap;
 
@@ -57,16 +59,18 @@ bool checkDeath(Map* map){
   return false;
 }
 
+// destroys a given player object
 void playerDestructor(Player* player){
   if(!player) return;
   
   sheetDestructor(player->_sheet);
-  free(player->idleAnim);
-  free(player->leftAnim);
-  free(player->rightAnim);
+  animationDestructor(player->idleAnim);
+  animationDestructor(player->leftAnim);
+  animationDestructor(player->rightAnim);
   free(player);
 }
 
+// handles player collision with the map objects
 bool handleCollision(
   Player* player,
   Point newPos,
@@ -78,6 +82,7 @@ bool handleCollision(
 ){
   Point paddedPlayerPos;
   ObjectArr* virtualMap = map->virtualMap;
+  // padded pos is the the converted real player pos to the map coordinates
   paddedPlayerPos.x = newPos.x / TILE_SIZE;
   paddedPlayerPos.y = newPos.y / TILE_SIZE;
 
@@ -94,6 +99,7 @@ bool handleCollision(
 
       switch(target->type){
         case ROCK:
+          // checks if the rock can be pushed
           if(
             target->state == IDLE 
             && xDiff
@@ -144,6 +150,7 @@ bool handleCollision(
   return false;
 }
 
+// helper function that handles the inputs to move the player
 void controlPlayerMovement(
   Player* player, 
   Map* map,
@@ -192,6 +199,7 @@ void controlPlayerMovement(
   }
 }
 
+// updates a given player object
 void playerUpdate(
   Player* player, 
   ALLEGRO_EVENT* event, 
@@ -221,6 +229,7 @@ void playerUpdate(
   }
 }
 
+// draws the player animations
 void playerDraw(Player* player, int frames){
   if(!player) return;
 

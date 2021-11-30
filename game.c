@@ -10,6 +10,7 @@
 #include "player.h"
 #include "display.h"
 
+// initializes all allegro essential systems
 void allegroInit(Game* game){
 	checkAllegroComponent(al_init(), "allegro");
 
@@ -36,7 +37,8 @@ void allegroInit(Game* game){
 
 }
 
-void countTime(int* time, int frames, Player* player){
+// helper function responsible for reducing the in game timer
+void countTime(int* time, int frames, Player* player, AudioManager* audioManager){
   if(frames % 60 != 0) return;
 
   *time -= 1;
@@ -44,15 +46,11 @@ void countTime(int* time, int frames, Player* player){
 
   player->alive = false;
   player->death_timer = PLAYER_DEATH_TIMER;
+  playEffect(audioManager, DEATH_SOUND);
 }
 
-void checkEasterImage(ALLEGRO_BITMAP* image){
-  if(!image){
-    fprintf(stderr, "Failed to load easter egg images\n");
-    exit(1);
-  }
-}
-
+// creates and initializes the game, returning it
+// also calls all other necessary constructors
 Game* gameConstructor(){
   Game* game = mallocSpace(sizeof(Game), "game pointer null");
 
@@ -65,18 +63,15 @@ Game* gameConstructor(){
   game->timeAvailabe = game->map->maxTime;
   game->player = playerConstructor(game->map);
   game->state = START; 
-  game->maziero = al_load_bitmap("./resources/maziMadeMe.png");
-  game->megaman = al_load_bitmap("./resources/megaman2.png");
-  game->mario = al_load_bitmap("./resources/mario2.png");
-  checkEasterImage(game->maziero);
-  checkEasterImage(game->megaman);
-  checkEasterImage(game->mario);
+  game->maziero = loadSheet("./resources/maziMadeMe.png");
+  game->megaman = loadSheet("./resources/megaman2.png");
+  game->mario = loadSheet("./resources/mario2.png");
   game->audioManager = audioManagerConstructor();
   playMusic(game->audioManager, MUSIC);
 
   FILE* rankFile = fopen(RANK_PATH, "r");
   if(!rankFile){
-    fprintf(stderr, "Failed to ranking from file\n");
+    fprintf(stderr, "Failed to open ranking from file\n");
     exit(1);
   } 
 
@@ -86,6 +81,7 @@ Game* gameConstructor(){
 
   char* line;
   for(int i = 0; i < RANKING_SIZE && fscanf(rankFile, "%m[^\n]", &line) > 0; i++){
+    // deals with the \n
     fgetc(rankFile);
     
     game->ranking[i] = atoi(line);
@@ -97,6 +93,8 @@ Game* gameConstructor(){
   return game;    
 }
 
+// destroys a given game object
+// and calls all other necessary destructors
 void gameDestructor(Game* game){
   if(!game) return;
   
@@ -104,9 +102,9 @@ void gameDestructor(Game* game){
   playerDestructor(game->player);
   displayDestructor(game->display);
   audioManagerDestructor(game->audioManager);
-  al_destroy_bitmap(game->maziero);
-  al_destroy_bitmap(game->mario);
-  al_destroy_bitmap(game->megaman);
+  sheetDestructor(game->maziero);
+  sheetDestructor(game->mario);
+  sheetDestructor(game->megaman);
   al_destroy_event_queue(game->queue);
   al_destroy_timer(game->timer);
   al_destroy_font(game->font);
@@ -114,6 +112,7 @@ void gameDestructor(Game* game){
   free(game);
 }
 
+// helper function that puts the map at starting start
 void resetLevel(Game* game){
   Player* player = game->player;
   if(player->alive && game->timeAvailabe != -1) return;
@@ -144,6 +143,8 @@ void resetLevel(Game* game){
   player->death_timer = 0;
 }
 
+// responsible for updating all game objects
+// also calls all other necessary update methods
 void gameUpdate(Game* game){
   ALLEGRO_EVENT* event = &game->event;
   
@@ -161,20 +162,22 @@ void gameUpdate(Game* game){
     (int*) &game->state,
     game->audioManager
   );
-  countTime(&game->timeAvailabe, game->frames, game->player);
+  countTime(&game->timeAvailabe, game->frames, game->player, game->audioManager);
   mapUpdate(game->map, event, game->frames, game->audioManager);
 }
 
+// responsible for showing and controlling the end screen
 void endScreen(Game* game){
   al_wait_for_event(game->queue, &game->event);
 
   switch(game->event.type){
+    case ALLEGRO_EVENT_DISPLAY_CLOSE:
     case ALLEGRO_EVENT_KEY_DOWN:
       game->state = QUIT;
 
       FILE* rankFile = fopen(RANK_PATH, "w");
       if(!rankFile){
-        fprintf(stderr, "Failed to ranking from file\n");
+        fprintf(stderr, "Failed to open ranking from file\n");
         exit(1);
       }
 
@@ -182,9 +185,6 @@ void endScreen(Game* game){
         fprintf(rankFile,"%d\n", game->ranking[i]);
       
       fclose(rankFile);
-      break;
-    case ALLEGRO_EVENT_DISPLAY_CLOSE:
-      game->state = QUIT;
       break;
   }
 
@@ -198,6 +198,7 @@ void endScreen(Game* game){
   }
 }
 
+// responsible for showing and controlling the start screen
 void startScreen(Game* game){
   al_wait_for_event(game->queue, &game->event);
 
@@ -225,6 +226,7 @@ void startScreen(Game* game){
   }
 }
 
+// responsible for displaying the help screen
 void helpScreen(Game* game){
   al_wait_for_event(game->queue, &game->event);
 
@@ -252,6 +254,8 @@ void helpScreen(Game* game){
   }
 }
 
+// responsible for drawing the game objects
+// also calls all other draw functions
 void gameDraw(Game* game){
   if(!game) return;
 
@@ -274,6 +278,8 @@ void gameDraw(Game* game){
 
 }
 
+// initializes the variables necessary to show the end screen
+// like score and ranking
 void endInit(Game* game){
   al_wait_for_event(game->queue, &game->event);
 
@@ -315,6 +321,7 @@ void endInit(Game* game){
   }
 }
 
+// responsible for the main game loop
 void playGame(Game* game){
   al_wait_for_event(game->queue, &game->event);
 

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "utils.h"
 
+// checks if an allegro component has been initialized
 void checkAllegroComponent(bool component, const char* desc){
   if(component) 
     return;
@@ -11,6 +12,7 @@ void checkAllegroComponent(bool component, const char* desc){
   fprintf(stderr, "Error initializing %s\n", desc);
 }
 
+// helper function that mallocs a space and checks if it worked
 void* mallocSpace(int size, const char* desc){
   void* pointer = malloc(size);
   if(!pointer){
@@ -21,10 +23,12 @@ void* mallocSpace(int size, const char* desc){
   return pointer;
 }
 
+// compares if two points are at the same place
 bool comparePoints(Point a, Point b){
   return a.x == b.x && a.y == b.y;
 }
 
+// return the index of the smallest number in an int array
 int indexOfSmallest(int* arr, int length){
   if(!arr) return -1;
   
@@ -37,6 +41,7 @@ int indexOfSmallest(int* arr, int length){
   return smaller;
 }
 
+// sort an int array by descending order
 void sortArray(int* arr, int length){
   int i, j, maxIndex;
  

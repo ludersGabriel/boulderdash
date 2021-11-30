@@ -6,6 +6,7 @@
 #include "utils.h"
 #include <stdio.h>
 
+// function that creates and initializes an animation
 Animation* animConstructor(
   int x, 
   int y, 
@@ -26,6 +27,7 @@ Animation* animConstructor(
   return anim;
 }
 
+// plays a given animation at a position with a frame limitation with a given offset
 void playAnimation(
   Animation* anim,
   Point* pos,
@@ -57,10 +59,18 @@ void playAnimation(
         0
       );
 
+  // goes to the next frame only when frames hit the refresh rate
   if(frames % anim->refreshRate == 0){
     anim->currentFrame += 1;
   }
   if(anim->currentFrame >= anim->frameCount)
     anim->currentFrame = 0;
 
+}
+
+// destroys a given animation
+void animationDestructor(Animation* anim){
+  if(!anim) return;
+
+  free(anim);
 }

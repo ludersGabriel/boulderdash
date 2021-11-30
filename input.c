@@ -4,14 +4,17 @@
 #include "input.h"
 #include "utils.h"
 
+// global variable that represents the virtual keyboard
 unsigned char virtualKeyboard[ALLEGRO_KEY_MAX];
 
+// initializes allegro keyboard system
 void keyboardInit(){
   checkAllegroComponent(al_install_keyboard(), "keyboard");
 
   memset(virtualKeyboard, 0, sizeof(virtualKeyboard));
 }
 
+// updates the state of the virtual keys
 void keyboardUpdate(ALLEGRO_EVENT* event){
   switch(event->type){
     case ALLEGRO_EVENT_TIMER:
