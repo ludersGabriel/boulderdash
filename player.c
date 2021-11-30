@@ -105,8 +105,8 @@ bool handleCollision(
         case WALL:
           return true;
         case DOOR:
-          playEffect(audioManager, FIREWORK);
           if(player->diamondHeld >= map->necessaryDiamonds){
+            playEffect(audioManager, FIREWORK);
             *gameState = GAME_END;
             player->escaped = true;
           }

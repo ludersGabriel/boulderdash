@@ -261,8 +261,8 @@ void gameDraw(Game* game){
     al_draw_bitmap(game->maziero, TILE_SIZE*16, TILE_SIZE*3, 0);
     al_draw_bitmap(game->mario, TILE_SIZE*26, TILE_SIZE*8, 0);
   }
-  playerDraw(game->player, game->frames);
   mapDraw(game->map, game->display, game->frames);
+  playerDraw(game->player, game->frames);
   drawHud(
     game->score, 
     game->map->necessaryDiamonds, 
