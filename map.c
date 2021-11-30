@@ -8,10 +8,10 @@
 #include "display.h"
 
 ObjectArr* initVirtualMap(Map* map){
-  int length = map->width * map->height;
+  int length = map->width * map->height * 2;
   ObjectArr* virtualMap = objArrConstructor(
     length, 
-    map->width, 
+    map->width * 2, 
     map->height, 
     "error allocating virtual map"
   );
@@ -59,6 +59,12 @@ ObjectArr* initVirtualMap(Map* map){
           break;
         case DOOR:
           virtualMap->objects[i*virtualMap->cols + j] = doorInit(map->_sheet, j, i);
+          break;
+        case FALSE_WALL:
+          virtualMap->objects[i*virtualMap->cols + j] = falseWallInit(map->_sheet, j, i);
+          break;
+        case PINK_DIAMOND:
+          virtualMap->objects[i*virtualMap->cols + j] = pinkDiamondInit(map->_sheet, map->diamondValue, j, i);
           break;
         case EMPTY:
         default:
@@ -268,6 +274,12 @@ void drawBackground(Sprite* background, Display* display){
 void drawVirtualMap(Map* map, Display* display, int frames){
   ObjectArr* virtualMap = map->virtualMap;
 
+  int offset = 0;
+
+  Point playerPos = getPlayerPos(map);
+  if(playerPos.x >= BUFFER_WIDTH)
+    offset = - BUFFER_WIDTH;
+
   for(int i = 0; i < virtualMap->lines; i++){
     for(int j = 0; j < virtualMap->cols; j++){
       Object* target = virtualMap->objects[i*virtualMap->cols + j];
@@ -285,13 +297,14 @@ void drawVirtualMap(Map* map, Display* display, int frames){
               target->anim,
               &unppadedPos,
               frames,
-              false
+              false,
+              offset
             );
           }
           else
             al_draw_bitmap(
               target->_sprite->bitmap,
-              target->pos.x*TILE_SIZE,
+              target->pos.x*TILE_SIZE + offset,
               target->pos.y*TILE_SIZE, 
               0
             ); 
@@ -306,7 +319,6 @@ void drawVirtualMap(Map* map, Display* display, int frames){
 void mapDraw(Map* map, Display* display, int frames){
   if(!map) return;
 
-  drawBackground(map->background, display);
   drawVirtualMap(map, display, frames);
   
 }

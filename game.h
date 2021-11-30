@@ -36,6 +36,9 @@ typedef struct GAME{
   Player* player;
   Display* display;
   AudioManager* audioManager;
+  ALLEGRO_BITMAP* maziero;
+  ALLEGRO_BITMAP* mario;
+  ALLEGRO_BITMAP* megaman;
   ALLEGRO_TIMER* timer;
   ALLEGRO_FONT* font;
   ALLEGRO_EVENT_QUEUE* queue;

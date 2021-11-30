@@ -17,6 +17,8 @@ typedef enum OBJECT_TYPE{
   DIAMOND,
   PLAYER,
   DOOR,
+  FALSE_WALL,
+  PINK_DIAMOND,
   OBJECT_TYPE_AMOUNT
 }ObjectType;
 
@@ -90,6 +92,8 @@ Object* diamondInit(ALLEGRO_BITMAP* mapSheet, int diamondValue, int x, int y);
 
 Object* doorInit(ALLEGRO_BITMAP* mapSheet, int x, int y);
 
+Object* falseWallInit(ALLEGRO_BITMAP* mapSheet, int x, int y);
 
+Object* pinkDiamondInit(ALLEGRO_BITMAP* mapSheet, int diamondValue, int x, int y);
 
 #endif

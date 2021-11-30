@@ -120,10 +120,17 @@ bool handleCollision(
             playEffect(audioManager, DIAMOND_LEVELUP);
             player->scoreMultiplier = 1.5;
           }
+          target->visible = false;
+          return false;
+        case PINK_DIAMOND:
+          playEffect(audioManager, DIAMOND_SOUND);
+          *score += target->score;
+          target->visible = false;
+          return false;
         case SAND:
           playEffect(audioManager, SAND_SOUND);
           target->visible = false;
-          break;
+          return false;
         case EMPTY:
         default:
           break;
@@ -215,29 +222,33 @@ void playerUpdate(
 void playerDraw(Player* player, int frames){
   if(!player) return;
 
+  int offset = 0;
+  if(player->currentPos.x >= BUFFER_WIDTH)
+    offset = -BUFFER_WIDTH;
+
   if(!player->alive){
-    playAnimation(player->deathAnim, &player->currentPos, frames, true);
+    playAnimation(player->deathAnim, &player->currentPos, frames, true, offset);
     return;
   }
 
   switch(player->state){
     case PLAYER_IDLE:
-      playAnimation(player->idleAnim, &player->currentPos, frames, true);
+      playAnimation(player->idleAnim, &player->currentPos, frames, true, offset);
       break;
     case MOVING_RIGHT:
-      playAnimation(player->rightAnim, &player->currentPos, frames, true);
+      playAnimation(player->rightAnim, &player->currentPos, frames, true, offset);
       break;
     case MOVING_LEFT:
-      playAnimation(player->leftAnim, &player->currentPos, frames, true);
+      playAnimation(player->leftAnim, &player->currentPos, frames, true, offset);
       break;
     case MOVING_DOWN:
     case MOVING_UP:
       if(player->lastHorizontal == MOVING_RIGHT){
-        playAnimation(player->rightAnim, &player->currentPos, frames, true);
+        playAnimation(player->rightAnim, &player->currentPos, frames, true, offset);
         break;
       }
 
-      playAnimation(player->leftAnim, &player->currentPos, frames, true);
+      playAnimation(player->leftAnim, &player->currentPos, frames, true, offset);
       break;
     default:
       break;

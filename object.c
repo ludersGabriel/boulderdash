@@ -250,3 +250,41 @@ Object* doorInit(ALLEGRO_BITMAP* mapSheet, int x, int y){
   );
 }
 
+Object* falseWallInit(ALLEGRO_BITMAP* mapSheet, int x, int y){
+  return objectConstructor(
+    x,
+    y,
+    spriteConstructor(mapSheet, 0*TILE_SIZE, 16*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loding false wall"),
+    NULL,
+    0,
+    TILE_SIZE,
+    TILE_SIZE,
+    0,
+    FALSE_WALL,
+    true,
+    false,
+    false,
+    false,
+    "init false wall"
+  );
+}
+
+Object* pinkDiamondInit(ALLEGRO_BITMAP* mapSheet, int diamondValue, int x, int y){
+  return objectConstructor(
+    x,
+    y,
+    spriteConstructor(mapSheet, 4*TILE_SIZE, 9*TILE_SIZE, TILE_SIZE, TILE_SIZE, "loading pink diamond"),
+    animConstructor(5, 8, 4, 0, 8, mapSheet),
+    diamondValue * 8,
+    TILE_SIZE,
+    TILE_SIZE,
+    0,
+    PINK_DIAMOND,
+    true,
+    false,
+    false,
+    false,
+    "init pink diamond"
+  );
+}
+

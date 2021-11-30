@@ -30,7 +30,8 @@ void playAnimation(
   Animation* anim,
   Point* pos,
   int frames,
-  bool horizontal
+  bool horizontal,
+  int offset
 ){
   if(!anim) return;
 
@@ -41,7 +42,7 @@ void playAnimation(
         anim->y,
         TILE_SIZE,
         TILE_SIZE,
-        pos->x,
+        pos->x + offset,
         pos->y,
         0
       )
@@ -51,7 +52,7 @@ void playAnimation(
         anim->y + TILE_SIZE*anim->currentFrame,
         TILE_SIZE,
         TILE_SIZE,
-        pos->x,
+        pos->x + offset,
         pos->y,
         0
       );

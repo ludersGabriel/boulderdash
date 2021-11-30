@@ -46,6 +46,13 @@ void countTime(int* time, int frames, Player* player){
   player->death_timer = PLAYER_DEATH_TIMER;
 }
 
+void checkEasterImage(ALLEGRO_BITMAP* image){
+  if(!image){
+    fprintf(stderr, "Failed to load easter egg images\n");
+    exit(1);
+  }
+}
+
 Game* gameConstructor(){
   Game* game = mallocSpace(sizeof(Game), "game pointer null");
 
@@ -58,6 +65,12 @@ Game* gameConstructor(){
   game->timeAvailabe = game->map->maxTime;
   game->player = playerConstructor(game->map);
   game->state = START; 
+  game->maziero = al_load_bitmap("./resources/maziMadeMe.png");
+  game->megaman = al_load_bitmap("./resources/megaman2.png");
+  game->mario = al_load_bitmap("./resources/mario2.png");
+  checkEasterImage(game->maziero);
+  checkEasterImage(game->megaman);
+  checkEasterImage(game->mario);
   game->audioManager = audioManagerConstructor();
   playMusic(game->audioManager, MUSIC);
 
@@ -91,6 +104,9 @@ void gameDestructor(Game* game){
   playerDestructor(game->player);
   displayDestructor(game->display);
   audioManagerDestructor(game->audioManager);
+  al_destroy_bitmap(game->maziero);
+  al_destroy_bitmap(game->mario);
+  al_destroy_bitmap(game->megaman);
   al_destroy_event_queue(game->queue);
   al_destroy_timer(game->timer);
   al_destroy_font(game->font);
@@ -239,8 +255,14 @@ void helpScreen(Game* game){
 void gameDraw(Game* game){
   if(!game) return;
 
-  mapDraw(game->map, game->display, game->frames);
+  drawBackground(game->map->background, game->display);
+  if(game->player->currentPos.x >= BUFFER_WIDTH){
+    al_draw_bitmap(game->megaman, TILE_SIZE*1, TILE_SIZE*8, 0);
+    al_draw_bitmap(game->maziero, TILE_SIZE*16, TILE_SIZE*3, 0);
+    al_draw_bitmap(game->mario, TILE_SIZE*26, TILE_SIZE*8, 0);
+  }
   playerDraw(game->player, game->frames);
+  mapDraw(game->map, game->display, game->frames);
   drawHud(
     game->score, 
     game->map->necessaryDiamonds, 
@@ -249,6 +271,7 @@ void gameDraw(Game* game){
     game->timeAvailabe, 
     game->font
   );
+
 }
 
 void endInit(Game* game){

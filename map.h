@@ -37,6 +37,8 @@ Point getPaddedPlayerPos(Map* map);
 
 Object* objectInPos(ObjectArr* virtualMap, int x, int y);
 
+void drawBackground(Sprite* background, Display* display);
+
 void mapDraw(Map* map, Display* display, int frames);
 
 #endif

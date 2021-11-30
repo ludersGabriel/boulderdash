@@ -29,7 +29,8 @@ void playAnimation(
   Animation* anim,
   Point* pos,
   int frames,
-  bool horizontal
+  bool horizontal,
+  int offset
 );
 
 
